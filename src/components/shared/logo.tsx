@@ -1,4 +1,4 @@
-import logo from "@/assets/logos/big-logo.png";
+import logo from "@/assets/logos/logo.png";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
