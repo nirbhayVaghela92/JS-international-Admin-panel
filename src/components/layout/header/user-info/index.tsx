@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronUpIcon } from "@/assets/icon/icons";
+import { ChevronUpIcon } from "@/assets/icon";
 import {
   Dropdown,
   DropdownContent,
@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
-import { LogOutIcon, SettingsIcon } from "@/assets/icon/icons";
+import { LogOutIcon, SettingsIcon } from "@/assets/icon";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
 import Cookies from "js-cookie";

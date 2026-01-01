@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon, ArrowRightIcon } from "@/assets/icon/icons";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/assets/icon";
 
 interface TablePaginationProps {
   currentPage: number;

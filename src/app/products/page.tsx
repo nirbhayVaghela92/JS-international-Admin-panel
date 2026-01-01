@@ -1,10 +1,11 @@
+import Products from "@/components/pages/Products";
+import ProductList from "@/components/shared/Tables/product-table/ProductList";
 
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Products List",
+const ProductsPage = () => {
+  return (
+    <Products />
+  );
 };
 
-export default function Page() {
-  return <div>Products</div>;
-}
+export default ProductsPage;

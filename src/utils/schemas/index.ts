@@ -598,3 +598,94 @@ export const regionSchema = Yup.object({
     .required("Threshold limit for Business is required"),
 });
 export type RegionSchemaType = Yup.InferType<typeof regionSchema>;
+
+export const ProductSchema = Yup.object().shape({
+  product_id: Yup
+    .string()
+    .required("Product ID is required")
+    .matches(/^PRD-\d{3,}$/, "Product ID must be in format PRD-XXX"),
+  
+  name: Yup
+    .string()
+    .required("Product name is required")
+    .min(3, "Product name must be at least 3 characters")
+    .max(100, "Product name must not exceed 100 characters"),
+  
+  category: Yup
+    .string()
+    .required("Category is required")
+    .oneOf(
+      ["Men's Watch", "Women's Watch", "Purses", "Jewellery"],
+      "Invalid category selected"
+    ),
+  
+  price: Yup
+    .number()
+    .required("Price is required")
+    .min(0, "Price must be greater than or equal to 0")
+    .test(
+      "is-decimal",
+      "Price must have at most 2 decimal places",
+      (value) => {
+        if (value === undefined) return true;
+        return /^\d+(\.\d{1,2})?$/.test(value.toString());
+      }
+    ),
+  
+  quantity: Yup
+    .number()
+    .required("Quantity is required")
+    .min(0, "Quantity must be greater than or equal to 0")
+    .integer("Quantity must be a whole number"),
+  
+  cover_image: Yup
+    .mixed()
+    .test("fileRequired", "Cover image is required", function (value) {
+      const { parent } = this;
+      // Skip validation in edit mode if image already exists
+      if (parent.id && value === undefined) return true;
+      return value !== undefined;
+    })
+    .test("fileType", "Only image files are allowed", function (value) {
+      if (!value || typeof value === "string") return true;
+      const file = value as File;
+      return file && ["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(file.type);
+    })
+    .test("fileSize", "File size must be less than 5MB", function (value) {
+      if (!value || typeof value === "string") return true;
+      const file = value as File;
+      return file && file.size <= 5 * 1024 * 1024;
+    }),
+  
+  images: Yup
+    .array()
+    .of(
+      Yup.mixed().test("fileType", "Only image files are allowed", function (value) {
+        if (!value || typeof value === "string") return true;
+        const file = value as File;
+        return file && ["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(file.type);
+      })
+    )
+    .max(5, "You can upload maximum 5 images")
+    .nullable(),
+  
+  color_options: Yup
+    .string()
+    .test(
+      "valid-colors",
+      "Please enter colors separated by commas",
+      function (value) {
+        if (!value) return true;
+        const colors = value.split(",").map((c) => c.trim());
+        return colors.every((color) => color.length > 0);
+      }
+    )
+    .nullable(),
+  
+  description: Yup
+    .string()
+    .max(500, "Description must not exceed 500 characters")
+    .nullable(),
+});
+
+export type ProductSchemaType = Yup.InferType<typeof ProductSchema>;

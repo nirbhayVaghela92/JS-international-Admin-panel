@@ -39,6 +39,7 @@ type UseGetDropdownsProps = {
   isPhysicalLocationsRangeDropdown?: boolean;
   isEstimatedAnnualRevenueDropdown?: boolean;
   isStripSubscriptionStatusDropdown?: boolean;
+  isCategoryDropdown?: boolean;
   params?: {
     limit?: number;
     page?: number;
@@ -70,6 +71,7 @@ export type Dropdowns = {
   physicalLocationsRangeDropdown?: DropdownOption[];
   estimatedAnnualRevenueDropdown?: DropdownOption[];
   stripSubscriptionStatusDropdown?: DropdownOption[];
+  categoryDropdown?: DropdownOption[];
 };
 
 const addNAOption = (list: any[]) => [...list, { value: -1, label: "N/A" }];
@@ -77,17 +79,11 @@ const addAllOption = (list: any[]) => [{ value: "all", label: "All" }, ...list];
 
 export const useGetDropdowns = ({
   isStatusDropdown = false,
-  isSubCategoryDropdown = false,
   isContryDropdown = false,
-  isStateDropdown = false,
-  isCityDropdown = false,
-  isAddAllOption = false,
-  isAddNAOption = false,
-  isUniversityStateList = false,
+  isCategoryDropdown = false,
   isGenderDropdown = false,
   isReportStatus = false,
   isBusinessStatusDrodown = false,
-  isRegionDropdown = false,
   isShowCreatedByDropdown = false,
   isPresenceDropdown = false,
   isCategoryStatsDropdown = false,
@@ -97,40 +93,6 @@ export const useGetDropdowns = ({
   params = {},
 }: UseGetDropdownsProps) => {
   const dropdowns: Dropdowns = {};
-  // Fetch data conditionally
-  // let { data: rawSubCategoryList = [] } = useGetSubCategory({
-  //   master_post_category_id: categoryId,
-  //   ...(params.userType && { userType: params.userType }),
-  //   enabled: isSubCategoryDropdown,
-  // });
-
-  // const { data: rawStateList = [] } = useGetStateList({
-  //   enabled: isStateDropdown && !!params.country_id,
-  //   country_id: params.country_id ?? "",
-  // });
-
-  // const { data: rawCityList = [] } = useGetCityList({
-  //   enabled: isCityDropdown && !!params.state_id,
-  //   state_id: params.state_id ?? "",
-  //   country_id: params.country_id ?? "",
-  //   search: params.search,
-  // });
-
-  // const { data: rawUniversityStateList } = useUniversityStateList({
-  //   enabled: isUniversityStateList,
-  // });
-
-  // Build Monthly Online Orders Dropdown
-  // Build dropdowns
-  // Sub Category Dropdown
-  // if (isSubCategoryDropdown) {
-  //   // rawSubCategoryList = rawSubCategoryList.filter((itm:any) => itm.status == "A");
-  //   let list = rawSubCategoryList.map((item: any) => ({
-  //     value: item.id,
-  //     label: capitalizeWords(item.title),
-  //   }));
-  //   dropdowns.subCategoryDropdown = list;
-  // }
 
   // Status Dropdown
   if (isStatusDropdown) {
@@ -158,25 +120,14 @@ export const useGetDropdowns = ({
     ];
     dropdowns.countryDropdown = list;
   }
-  // if (isStateDropdown && params.country_id) {
-  //   let list = rawStateList.map((item: any) => ({
-  //     value: item.id,
-  //     label: item.name,
-  //   }));
-  //   if (isAddNAOption) list = addNAOption(list);
-  //   if (isAddAllOption) list = addAllOption(list);
-  //   dropdowns.stateDropdown = list;
-  // }
-  // if (isCityDropdown && params.state_id) {
-  //   let list = rawCityList.map((item: any) => ({
-  //     value: item.id,
-  //     label: item.name,
-  //   }));
-  //   if (isAddNAOption) list = addNAOption(list);
-  //   if (isAddAllOption) list = addAllOption(list);
-  //   dropdowns.cityDropdown = list;
-  // }
-
+  if (isCategoryDropdown) {
+    dropdowns.categoryDropdown = [
+      { label: "Men's Watch", value: "Men's Watch" },
+      { label: "Women's Watch", value: "Women's Watch" },
+      { label: "Purses", value: "Purses" },
+      { label: "Jewellery", value: "Jewellery" },
+    ];
+  }
   // Gender Dropdown
   if (isGenderDropdown) {
     dropdowns.genderDropdown = genderDropdownOptions;

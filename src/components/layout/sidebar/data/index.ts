@@ -1,5 +1,5 @@
 import { routes } from "@/constants/routes";
-import * as Icons from "@/assets/icon/NavIcons";
+import * as Icons from "@/assets/icon";
 
 export const NAV_DATA = [
   {
@@ -19,8 +19,8 @@ export const NAV_DATA = [
       },
       {
         title: "Products",
-        url: routes.userposts.list(),
-        icon: Icons.Posts,
+        url: routes.products.list(),
+        icon: Icons.Products,
         items: [],
       },
       // {

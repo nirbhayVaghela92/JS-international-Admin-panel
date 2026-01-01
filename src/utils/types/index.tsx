@@ -94,7 +94,6 @@ export interface FiltersTypes {
   total_pages: number;
   page: number;
   limit: number;
-  state_id?: number | undefined;
   master_category_id?: number | undefined;
   sub_category_id?: number | undefined;
   status?: "A" | "I" | "all" | undefined;
@@ -120,10 +119,7 @@ export interface FiltersTypes {
   presence?: Presence | undefined;
   regionUnlockedStatus?: RegionLockStatus | undefined;
   categoryId?: number | undefined
-  businessId?: number | undefined;
-  stripSubscriptionStatus?: SubscriptionStatus | undefined;
-  startDate?: string | undefined;
-  endDate?: string | undefined;
+
 }
 
 export interface Badge {

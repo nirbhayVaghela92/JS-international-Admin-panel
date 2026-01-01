@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV_DATA } from "./data";
 import { MenuItem } from "./menu-item";
-import { ChevronUp } from "@/assets/icon/NavIcons";
-import { ArrowLeftIcon } from "@/assets/icon/icons";
+import { ChevronUp } from "@/assets/icon";
+import { ArrowLeftIcon } from "@/assets/icon";
 import { useSidebarContext } from "@/components/layout/sidebar/sidebar-context";
 
 // hook to detect <1024px

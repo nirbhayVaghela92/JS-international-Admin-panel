@@ -1,7 +1,7 @@
 // OverviewCardsGroup.tsx
 import { compactFormat } from "@/utils/helpers/commonHelpers";
 import { OverviewCard } from "./card";
-import * as icons from "@/assets/icon/NavIcons";
+import * as icons from "@/assets/icon";
 
 export function OverviewCardsGroup({ data }: { data: any }) {
   // const {
@@ -28,13 +28,12 @@ export function OverviewCardsGroup({ data }: { data: any }) {
           }}
           Icon={icons.Users}
         />
-
         <OverviewCard
           label="Products"
           data={{
             value: compactFormat(data?.total_products),
           }}
-          Icon={icons.Posts}
+          Icon={icons.Products}
         />
       </div>
     </div>

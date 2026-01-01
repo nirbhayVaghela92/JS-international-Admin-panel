@@ -1,7 +1,8 @@
 "use client";
 import { useSidebarContext } from "@/components/layout/sidebar/sidebar-context";
-import { MenuIcon } from "@/assets/icon/icons";
+
 import { UserInfo } from "@/components/layout/header/user-info";
+import { MenuIcon } from "@/assets/icon";
 
 export function Header() {
   const { toggleSidebar } = useSidebarContext();
