@@ -1,5 +1,5 @@
 "use client";
-import { EmailIcon, UserIcon } from "@/assets/icon/icons";
+import { EmailIcon, UserIcon } from "@/assets/icon";
 import InputGroup from "@/components/custom-elements/InputGroup";
 
 import { CustomButton } from "@/components/custom-elements/button";

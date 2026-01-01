@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import { BusinessVerificationType, ContestRequestStatus } from "../types";
-import { DateFilterName } from "@/components/custom-elements/TimeFrameFilter";
 
 export const capitalizeWords = (str: string): string => {
   if (!str) return "";
@@ -202,65 +201,4 @@ export const formatCurrency = (
   }).format(amount);
 };
 
-export const getStartEndDate = (filter: {
-  timeframe: DateFilterName;
-  range: { start: Date | null; end: Date | null };
-}): {
-  startDate: string;
-  endDate: string;
-} => {
-  const today = new Date();
 
-  // normalize today (avoid time issues)
-  today.setHours(0, 0, 0, 0);
-
-  let startDate: Date;
-  let endDate: Date;
-
-  switch (filter.timeframe) {
-    case "Today":
-      startDate = today;
-      endDate = today;
-      break;
-
-    case "Yesterday":
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 1);
-      endDate = startDate;
-      break;
-
-    case "Last 7 Days":
-      endDate = today;
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 6);
-      break;
-
-    case "Last 30 Days":
-      endDate = today;
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 29);
-      break;
-
-    case "Last 90 Days":
-      endDate = today;
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 89);
-      break;
-
-    case "Date Range":
-      if (!filter.range.start || !filter.range.end) {
-        throw new Error("Start and End date must be provided for Date Range");
-      }
-      startDate = filter.range.start;
-      endDate = filter.range.end;
-      break;
-
-    default:
-      throw new Error("Invalid timeframe");
-  }
-
-  return {
-    startDate: startDate.toISOString().split("T")[0],
-    endDate: endDate.toISOString().split("T")[0],
-  };
-};

@@ -30,7 +30,7 @@ import { X } from "lucide-react";
 import InputGroup from "@/components/custom-elements/InputGroup";
 import { Loader } from "@/components/custom-elements/Loader";
 import { SortIcon } from "@/assets/icon";
-import { AddEditProductDialog } from "../../Dialog/CreateEditDialogs/CreateEditDialogs";
+import { AddEditProductDialog } from "../../Dialog/CreateEditDialogs/AddEditProductDialog";
 import UserActionDropdown from "../../User/UserActionDropdown";
 
 interface ProductType {

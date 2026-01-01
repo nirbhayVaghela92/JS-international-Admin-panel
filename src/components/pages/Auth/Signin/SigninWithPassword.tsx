@@ -1,5 +1,5 @@
 "use client";
-import { EmailIcon, PasswordIcon } from "@/assets/icon/icons";
+import { EmailIcon, PasswordIcon } from "@/assets/icon";
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";

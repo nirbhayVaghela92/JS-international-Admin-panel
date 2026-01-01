@@ -1,7 +1,7 @@
 "use client";
 import Breadcrumb from "@/components/custom-elements/Breadcrumb";
 import { CustomButton } from "@/components/custom-elements/button";
-import { AddEditProductDialog } from "@/components/shared/Dialog/CreateEditDialogs/CreateEditDialogs";
+import { AddEditProductDialog } from "@/components/shared/Dialog/CreateEditDialogs/AddEditProductDialog";
 import ProductList from "@/components/shared/Tables/product-table/ProductList";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";

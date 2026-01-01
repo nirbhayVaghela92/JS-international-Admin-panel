@@ -34,7 +34,7 @@ export const AddEditProductDialog = ({
   productDetails,
 }: AddEditProductDialogProps) => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
-  const [imagesPreview, setImagesPreview] = useState<string[]>([]);
+  const [imagesPreview, setImagesPreview] = useState<string>();
   
   const { mutateAsync: createProduct, isPending: isCreatingProduct } =
     useCreateProduct();
@@ -110,7 +110,7 @@ export const AddEditProductDialog = ({
         description: "",
       });
       setCoverPreview(null);
-      setImagesPreview([]);
+      setImagesPreview("");
     }
   }, [mode, productDetails, reset]);
 
@@ -164,7 +164,7 @@ export const AddEditProductDialog = ({
         if (!open) {
           reset();
           setCoverPreview(null);
-          setImagesPreview([]);
+          setImagesPreview("");
           onClose();
         }
       }}
@@ -334,7 +334,7 @@ export const AddEditProductDialog = ({
               onClick={() => {
                 reset();
                 setCoverPreview(null);
-                setImagesPreview([]);
+                setImagesPreview("");
                 onClose();
               }}
               variant="outline"
