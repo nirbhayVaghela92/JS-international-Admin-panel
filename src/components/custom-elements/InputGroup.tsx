@@ -143,7 +143,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
             props.height === "sm" && "py-2.5",
             error
               ? "border-red-500 focus:ring-red-500"
-              : "border-primary",
+              : "border-gray-300 focus:border-primary focus:ring-primary",
           )}
           required={required}
           disabled={disabled}

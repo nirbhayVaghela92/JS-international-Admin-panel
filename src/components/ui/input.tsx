@@ -34,7 +34,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "w-full rounded-lg border bg-white px-4 py-2 text-sm text-dark shadow-sm outline-none placeholder:text-dark-6 focus:outline-none focus:ring-1 dark:text-white",
               error
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500",
+                : "border-gray-300 focus:border-primary focus:ring-primary",
             )}
             {...props}
           />
