@@ -23,12 +23,12 @@ export const NAV_DATA = [
         icon: Icons.Products,
         items: [],
       },
-      // {
-      //   title: "Push Notification",
-      //   url: routes.notification.list,
-      //   icon: Icons.NotificationIcon,
-      //   items: [],
-      // },
+      {
+        title: "Support Quries",
+        url: routes.supportQueries.list,
+        icon: Icons.supportIcon ,
+        items: [],
+      },
       {
         title: "Settings",
         icon: Icons.SettingsIcon,

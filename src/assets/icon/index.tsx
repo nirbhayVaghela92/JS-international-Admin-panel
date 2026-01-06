@@ -420,21 +420,21 @@ export function Authentication(props: PropsType) {
   );
 }
 
-export function ArrowLeftIcon(props: PropsType) {
+export function ArrowLeftIcon(props: IconProps) {
   return (
     <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="currentColor"
-      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-chevron-left-icon lucide-chevron-left"
     >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M7.89775 4.10225C8.11742 4.32192 8.11742 4.67808 7.89775 4.89775L4.358 8.4375H15C15.3107 8.4375 15.5625 8.68934 15.5625 9C15.5625 9.31066 15.3107 9.5625 15 9.5625H4.358L7.89775 13.1023C8.11742 13.3219 8.11742 13.6781 7.89775 13.8977C7.67808 14.1174 7.32192 14.1174 7.10225 13.8977L2.60225 9.39775C2.38258 9.17808 2.38258 8.82192 2.60225 8.60225L7.10225 4.10225C7.32192 3.88258 7.67808 3.88258 7.89775 4.10225Z"
-        fill=""
-      />
+      <path d="m15 18-6-6 6-6" />
     </svg>
   );
 }
@@ -859,7 +859,13 @@ export const BackArrow = () => {
 
 export function MenuIcon(props: IconProps) {
   return (
-    <svg width="25" height="24" viewBox="0 0 25 24" fill="currentColor" {...props}>
+    <svg
+      width="25"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="currentColor"
+      {...props}
+    >
       <path d="M3.5625 6C3.5625 5.58579 3.89829 5.25 4.3125 5.25H20.3125C20.7267 5.25 21.0625 5.58579 21.0625 6C21.0625 6.41421 20.7267 6.75 20.3125 6.75L4.3125 6.75C3.89829 6.75 3.5625 6.41422 3.5625 6Z" />
       <path d="M3.5625 18C3.5625 17.5858 3.89829 17.25 4.3125 17.25L20.3125 17.25C20.7267 17.25 21.0625 17.5858 21.0625 18C21.0625 18.4142 20.7267 18.75 20.3125 18.75L4.3125 18.75C3.89829 18.75 3.5625 18.4142 3.5625 18Z" />
       <path d="M4.3125 11.25C3.89829 11.25 3.5625 11.5858 3.5625 12C3.5625 12.4142 3.89829 12.75 4.3125 12.75L20.3125 12.75C20.7267 12.75 21.0625 12.4142 21.0625 12C21.0625 11.5858 20.7267 11.25 20.3125 11.25L4.3125 11.25Z" />
@@ -926,3 +932,24 @@ export function ArrowRightIcon(props: IconProps) {
     </svg>
   );
 }
+
+export const supportIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className="lucide lucide-headset-icon lucide-headset"
+      {...props}
+    >
+      <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z" />
+      <path d="M21 16v2a4 4 0 0 1-4 4h-5" />
+    </svg>
+  );
+};

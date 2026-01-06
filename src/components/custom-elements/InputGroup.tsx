@@ -134,16 +134,22 @@ const InputGroup: React.FC<InputGroupProps> = ({
           value={value}
           defaultValue={defaultValue}
           className={cn(
-            // "w-full rounded-lg border-[1.5px] border-stroke bg-transparent text-sm outline-none transition focus:border-primary focus:ring-1 disabled:cursor-default disabled:bg-gray-2 data-[active=true]:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary dark:disabled:bg-dark dark:data-[active=true]:border-primary",
-            "w-full rounded-lg border bg-white text-sm shadow-sm outline-none focus:outline-none focus:ring-1",
+            "w-full rounded-lg border bg-white text-sm outline-none transition ",
             type === "file"
               ? getFileStyles(props.fileStyleVariant!)
               : "px-3 py-2 text-sm text-dark placeholder:text-dark-6 dark:text-white",
+
+            // spacing for icon
             props.iconPosition === "left" && "pl-12.5",
             props.height === "sm" && "py-2.5",
+
+            // error vs normal
             error
               ? "border-red-500 focus:ring-red-500"
-              : "border-primary",
+              : "border-gray-300 focus:border-primary focus:ring-primary",
+
+            // IMPORTANT: disable ring completely
+            "focus:ring-0 focus:ring-offset-0",
           )}
           required={required}
           disabled={disabled}

@@ -18,6 +18,10 @@ export const routes = {
     view: (id: number) => `/products/${id}`,
   },
   dashboard: "/dashboard",
+  supportQueries: {
+    list: "/support-queries",
+    // view: (id: number) => `/support-queries/${id}`,
+  },
   settings: {
     editProfile: "/settings/account-settings",
     changePassword: "/settings/change-password",
