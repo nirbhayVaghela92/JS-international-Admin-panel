@@ -211,7 +211,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
       return (
         <div className="relative mr-2 inline-block rounded-md border bg-gray-50 p-3">
           <div className="mb-2 flex items-center gap-2">
-            <FileAudio className="h-5 w-5 text-blue-600" />
+            <FileAudio className="h-5 w-5 text-primary" />
             <span className="text-sm font-medium text-gray-700">
               Audio File
             </span>
@@ -249,7 +249,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
                   href={preview}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm text-primary hover:underline"
                 >
                   View PDF
                 </a>
@@ -306,7 +306,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
             className="relative mb-2 mr-2 inline-block rounded-md border bg-gray-50 p-3"
           >
             <div className="mb-2 flex items-center gap-2">
-              <FileAudio className="h-4 w-4 text-blue-600" />
+              <FileAudio className="h-4 w-4 text-primary" />
               <span className="text-xs font-medium text-gray-700">
                 Audio {index + 1}
               </span>
@@ -345,7 +345,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
                     href={previewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:underline"
+                    className="text-sm text-primary hover:underline"
                   >
                     View PDF
                   </a>
@@ -383,7 +383,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
               <div className="flex flex-col items-center gap-2">
                 <config.icon className="h-8 w-8 text-gray-400" />
                 <p className="text-gray-600">
-                  <span className="font-semibold text-[#5750f1]">
+                  <span className="font-semibold text-primary">
                     {displayTitle}
                   </span>
                   <br />

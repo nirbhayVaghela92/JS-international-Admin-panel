@@ -313,7 +313,7 @@ export const AddEditProductDialog = ({
               error={errors?.images?.message}
               show={true}
               setPreview={setImagesPreview}
-              preview={imagesPreview}
+              // preview={imagesPreview}
             />
           </div>
 
@@ -321,6 +321,7 @@ export const AddEditProductDialog = ({
           <div className="grid grid-cols-1 gap-4">
             <Textarea
               label="Description"
+              className="border-gray-300 focus:border-primary focus:ring-primary"
               errorMessage={errors.description?.message}
               {...register("description")}
               placeholder="Add product description"
