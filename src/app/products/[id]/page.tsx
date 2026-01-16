@@ -1,11 +1,7 @@
-
+import ProductDetails from "@/components/pages/Products/ProductDetails";
 
 const ProductViewPage = () => {
-    return (
-        <div>
-            <h1>Product Details</h1>
-        </div>
-    );
-}
+  return <ProductDetails id={2} />;
+};
 
 export default ProductViewPage;

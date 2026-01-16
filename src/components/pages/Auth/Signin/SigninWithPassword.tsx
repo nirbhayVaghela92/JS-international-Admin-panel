@@ -16,7 +16,6 @@ import { CustomButton } from "@/components/custom-elements/button";
 export default function SigninWithPassword() {
   const router = useRouter();
   const { mutateAsync: signIn, isPending } = useSignIn();
-  const { mutateAsync: getAdminDetails } = useGetAdminDetails();
 
   const {
     register,
@@ -32,28 +31,19 @@ export default function SigninWithPassword() {
   });
 
   const onSubmit = async (values: SignInSchemaType) => {
-    console.log("check")
-    // const { data } = await signIn({
-    //   email: values.email,
-    //   password: values.password,
-    // });
+    const { data } = await signIn({
+      email: values.email,
+      password: values.password,
+    });
+    console.log(data, "data")
+    if (!data?.success || data?.success === "false") {
+      throw new Error(data?.message || "Login failed.");
+    }
 
-    // if (!data?.status || data?.status === "false") {
-    //   throw new Error(data?.message || "Login failed.");
-    // }
-
-    // Cookies.set("token", data.data.token);
+    Cookies.set("token", data.token);
     // const res = await getAdminDetails(data.data.admin.id);
-    // LocalStorageSetItem("adminDetails", res);
-    // const userData = { ...data?.admin, token: data?.token };
-    // if (userData.password) delete userData.password;
-    // if (values?.rememberMe) {
-    //   LocalStorageSetItem("userData", userData);
-    // } else {
-    //   SessionStorageSetItem("userData", userData);
-    // }
+    LocalStorageSetItem("adminDetails", data?.admin);
 
-    // window.dispatchEvent(new Event("storage"));
     router.replace(routes.dashboard);
   };
 

@@ -14,7 +14,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   useChangeProductStatus,
   useDeleteProduct,
-  useGetProductsList,
 } from "@/hooks/queries";
 import { FiltersTypes } from "@/utils/types";
 import dayjs from "dayjs";

@@ -35,7 +35,7 @@ export const AddEditProductDialog = ({
 }: AddEditProductDialogProps) => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [imagesPreview, setImagesPreview] = useState<string>();
-  
+
   const { mutateAsync: createProduct, isPending: isCreatingProduct } =
     useCreateProduct();
   const { mutateAsync: updateProduct, isPending: isUpdatingProduct } =
@@ -77,6 +77,49 @@ export const AddEditProductDialog = ({
   const quantity = watch("quantity");
   const colorOptions = watch("color_options");
 
+  const onSubmit = async (data: ProductSchemaType) => {
+    const formData = new FormData();
+
+    formData.append("productCode", data.product_id);
+    formData.append("productName", data.name);
+    formData.append("category", data.category!);
+    formData.append("price", data.price.toString());
+    formData.append("quantity", data.quantity.toString());
+
+    if (data.cover_image) {
+      formData.append("coverImage", data.cover_image as Blob);
+    }
+
+    if (data.images && data.images.length > 0) {
+      data.images.forEach((image, index) => {
+        formData.append(`images`, image as Blob);
+      });
+    }
+
+    // Convert comma-separated string to array
+    if (data.color_options) {
+      const colorsArray = data.color_options
+        .split(",")
+        .map((color) => color.trim())
+        .filter((color) => color.length > 0);
+      formData.append("color_options", JSON.stringify(colorsArray));
+    }
+
+    if (data.description) {
+      formData.append("description", data.description);
+    }
+
+    if (mode === "edit" && productDetails) {
+      formData.append("id", productDetails.id);
+      await updateProduct(formData);
+    } else {
+      await createProduct(formData);
+    }
+
+    onClose();
+    reset();
+  };
+
   useEffect(() => {
     if (mode === "edit" && productDetails) {
       reset({
@@ -90,7 +133,7 @@ export const AddEditProductDialog = ({
         color_options: productDetails.color_options?.join(", ") || "",
         description: productDetails.description || "",
       });
-      
+
       if (productDetails.cover_image) {
         setCoverPreview(productDetails.cover_image);
       }
@@ -113,49 +156,6 @@ export const AddEditProductDialog = ({
       setImagesPreview("");
     }
   }, [mode, productDetails, reset]);
-
-  const onSubmit = async (data: ProductSchemaType) => {
-    const formData = new FormData();
-    
-    formData.append("product_id", data.product_id);
-    formData.append("name", data.name);
-    formData.append("category", data.category!);
-    formData.append("price", data.price.toString());
-    formData.append("quantity", data.quantity.toString());
-    
-    if (data.cover_image) {
-      formData.append("cover_image", data.cover_image as Blob);
-    }
-    
-    if (data.images && data.images.length > 0) {
-      data.images.forEach((image, index) => {
-        formData.append(`images`, image as Blob);
-      });
-    }
-    
-    // Convert comma-separated string to array
-    if (data.color_options) {
-      const colorsArray = data.color_options
-        .split(",")
-        .map((color) => color.trim())
-        .filter((color) => color.length > 0);
-      formData.append("color_options", JSON.stringify(colorsArray));
-    }
-    
-    if (data.description) {
-      formData.append("description", data.description);
-    }
-
-    if (mode === "edit" && productDetails) {
-      formData.append("id", productDetails.id);
-      await updateProduct(formData);
-    } else {
-      await createProduct(formData);
-    }
-
-    onClose();
-    reset();
-  };
 
   return (
     <Dialog
@@ -201,7 +201,7 @@ export const AddEditProductDialog = ({
               errorMessage={errors.product_id?.message}
               {...register("product_id")}
             />
-            
+
             <InputGroup
               autoComplete="off"
               className="w-full"
@@ -220,12 +220,14 @@ export const AddEditProductDialog = ({
               label="Category"
               placeholder="Select category"
               width="w-full"
-              options={categoryDropdown || [
-                { label: "Men's Watch", value: "Men's Watch" },
-                { label: "Women's Watch", value: "Women's Watch" },
-                { label: "Purses", value: "Purses" },
-                { label: "Jewellery", value: "Jewellery" },
-              ]}
+              options={
+                categoryDropdown || [
+                  { label: "Men's Watch", value: "Men's Watch" },
+                  { label: "Women's Watch", value: "Women's Watch" },
+                  { label: "Purses", value: "Purses" },
+                  { label: "Jewellery", value: "Jewellery" },
+                ]
+              }
               error={!!errors.category}
               errorMessage={errors.category?.message}
               showClearButton={false}

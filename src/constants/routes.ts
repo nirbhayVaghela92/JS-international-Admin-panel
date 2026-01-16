@@ -48,6 +48,5 @@ export const protectedRoutes: string[] = [
   routes.settings.changePassword,
   routes.settings.editProfile,
   "/users",
-  "/settings/categories",
-  "/posts",
+  "/products"
 ];

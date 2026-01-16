@@ -1,7 +1,5 @@
-import { get } from "http";
-
 export const API = {
-  signin: "/auth/login",
+  signin: "/admin/login",
   sendForgotPasswordOtp: "/admin/forgot-password/send-otp",
   verifyForgotPasswordOtp: "/admin/forgot-password/verify-otp",
   resetPassword: "/admin/forgot-password/update-password",
@@ -23,6 +21,11 @@ export const API = {
   getAppDownloadLink: "/qr-download",
   exportUsersCSV: "/user/export-users",
   getUserBussinessList: "/admin/user/businesses",
+
+  // Products
+  productsList: "/admin/products",
+  createProduct: "/admin/products",
+  editProduct: (id: number) => `/admin/products/${id}`,
 
   getReportedUserDetails: (id: number) => `/admin/get-reported-user/${id}`,
   updateReportedUserStatus: "/admin/update-user-report-status",
@@ -120,20 +123,19 @@ export const API = {
     `/admin/business/reward-adventure/${businessId}`,
   exportBusinessAccountsCSV: "/user/export-businesses",
   exportRewardLogsCSV: "/user/export-rewards",
-  monthlyOnlineOrdersDropdown:"/common/monthly-online-orders",
-  physicalLocationsRangeDropdown:"/common/physical-locations-range",
-  estimatedAnnualRevenueDropdown:"/common/estimated-annual-revenue",
+  monthlyOnlineOrdersDropdown: "/common/monthly-online-orders",
+  physicalLocationsRangeDropdown: "/common/physical-locations-range",
+  estimatedAnnualRevenueDropdown: "/common/estimated-annual-revenue",
   getBusinessSubscriptionList: "/admin/subscription",
   getBusinessSubscriptionDetails: (id: number) => `/admin/subscription/${id}`,
   getInvoicesList: "/admin/subscription/invoices",
-  
 
   //posts APIs
   updateGlobalPostsConfig: "/admin/update-global-post-points",
 
   // Tags APIs
-  getTagsList :"/admin/tag-list",
-  createTag :"/admin/tag",
+  getTagsList: "/admin/tag-list",
+  createTag: "/admin/tag",
   editTag: (id: number) => `/admin/tag/${id}`,
   deleteTag: (id: number) => `/admin/tag/${id}`,
 };

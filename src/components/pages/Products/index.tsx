@@ -24,9 +24,7 @@ const Products = () => {
           />
         }
       />
-      <div>
-        <ProductList />
-      </div>
+      <ProductList />
       {isDialogOpen && (
         <AddEditProductDialog
           productDetails={null}
