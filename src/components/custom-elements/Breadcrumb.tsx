@@ -1,60 +1,40 @@
 "use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import BackButton from "./BackButton";
 
 interface BreadcrumbProps {
   pageName: string;
-  isShowBackButton?: boolean; // Optional back button text
-  onBack?: () => void; // Optional custom back handler
-  breadcrumbTrail?: ReactNode; // Optional custom breadcrumb trail
+  isShowBackButton?: boolean;
   previousPage?: string;
-  lastButton?: any;
+  breadcrumbTrail?: ReactNode;
+  lastButton?: ReactNode;
 }
 
 const Breadcrumb = ({
   pageName,
   isShowBackButton = false,
-  onBack,
-  breadcrumbTrail,
   previousPage = "",
-  // isShowLastButton,
-  lastButton
+  breadcrumbTrail,
+  lastButton,
 }: BreadcrumbProps) => {
-  const router = useRouter();
-
   return (
-    <div className="w-full mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-center gap-3">
-        {isShowBackButton && <BackButton previousPage={previousPage} />}
-        <h2 className="text-[26px] font-bold leading-[30px] text-dark dark:text-white">
-          {pageName}
-        </h2>
+    <div className="mb-6 flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div className="flex items-center gap-3">
+          {isShowBackButton && <BackButton previousPage={previousPage} />}
+          <h2 className="text-[26px] font-bold leading-[30px] text-foreground">
+            {pageName}
+          </h2>
+        </div>
+
+        {breadcrumbTrail && (
+          <div className="mt-1 text-sm text-muted-foreground">
+            {breadcrumbTrail}
+          </div>
+        )}
       </div>
 
-      {lastButton &&
-        <div>
-          {lastButton}
-        </div>
-      }
-      {/* <nav>
-        <ol className="flex items-center gap-2 text-sm text-primary">
-          {breadcrumbTrail || (
-            <>
-              <li>
-                <Link className="font-medium text-primary" href="/user">
-                  users /
-                </Link>
-                <Link className="font-medium text-primary" href="#">
-                  user view /
-                </Link>
-              </li>
-              <li className="font-medium text-primary">{pageName}</li>
-            </>
-          )}
-        </ol>
-      </nav> */}
+      {lastButton && <div>{lastButton}</div>}
     </div>
   );
 };

@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { ParmasType } from "@/utils/types";
+import { FiltersTypes } from "@/utils/types";
 import { RefObject, useCallback, useMemo } from "react";
 
-
 interface useInfiniteScrollType {
-  params: ParmasType;
+  params: FiltersTypes;
   containerRef: RefObject<HTMLDivElement>;
   enabled?: boolean;
   fn?: any;
@@ -25,11 +24,15 @@ export function useInfiniteScroll({
   } = fn(params, enabled);
 
   const data = useMemo(() => {
-    return response?.pages?.flatMap(
-      (page: any) => {
-        return page?.data?.data?.data || page?.data?.data?.contests || page?.data?.data?.formattedComments || page?.data?.data || []
-      },
-    );
+    return response?.pages?.flatMap((page: any) => {
+      return (
+        page?.data?.data?.data ||
+        page?.data?.data?.contests ||
+        page?.data?.data?.formattedComments ||
+        page?.data?.data ||
+        []
+      );
+    });
   }, [response]);
 
   const handleScroll = useCallback(() => {

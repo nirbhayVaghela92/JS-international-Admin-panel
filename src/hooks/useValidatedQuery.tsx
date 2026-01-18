@@ -7,11 +7,12 @@ export const useValidatedQuery = (
   isInfinteQuery: boolean = false,
 ) => {
   const router = useRouter();
+  console.log(queryResult, "queryResult")
   useEffect(() => {
     if (!queryResult.isLoading) {
       const status =
-        queryResult?.data?.data?.status ||
-        queryResult?.data?.pages?.[0]?.data.status;
+        queryResult?.data?.data?.success ||
+        queryResult?.data?.pages?.[0]?.data.success;
         
       if (!status || status === "false") {
         router.replace(routes.dashboard);
@@ -22,7 +23,7 @@ export const useValidatedQuery = (
   return isInfinteQuery
     ? queryResult
     : {
-        data: queryResult?.data?.data?.data,
+        data: queryResult?.data?.data,
         isLoading: queryResult.isLoading,
         isPending: queryResult.isPending,
       };

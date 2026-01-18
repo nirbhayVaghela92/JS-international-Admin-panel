@@ -15,7 +15,9 @@ export const routes = {
   },
   products: {
     list: (page: number = 1) => `/products?page=${page}`,
-    view: (id: number) => `/products/${id}`,
+    view: (slug: string) => `/products/${slug}`,
+    add: "/products/add-product", 
+    edit: (slug: string) => `/products/edit-product/${slug}`,
   },
   dashboard: "/dashboard",
   supportQueries: {

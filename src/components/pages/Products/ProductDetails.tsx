@@ -20,7 +20,10 @@ import {
 } from "@/components/ui/table";
 import { ArrowLeft, ImageIcon, Palette, BarChart3 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useGetProductDetails } from "@/hooks/queries";
+import { Loader } from "@/components/custom-elements/Loader";
+import { formatPrice, getFullImageUrl } from "@/utils/helpers/commonHelpers";
 
 interface ProductVariant {
   id: string;
@@ -85,24 +88,30 @@ const mockProduct = {
   totalStock: 105,
 };
 
-export default function ProductDetailsPage({
-  id,
-}: {
-    id: number 
-}) {
+export default function ProductDetailsPage() {
+  const { slug } = useParams();
+  const { data: product, isLoading } = useGetProductDetails(String(slug));
+
   const router = useRouter();
-  const product = mockProduct;
+
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null,
   );
 
   const getTotalStock = () => {
-    return product.variants.reduce((sum, variant) => sum + variant.stock, 0);
+    return product?.variants.reduce(
+      (sum: any, variant: any) => sum + variant.stock,
+      0,
+    );
   };
 
   const getLowStockVariants = () => {
-    return product.variants.filter((v) => v.stock < 30);
+    return product?.variants.filter((v: any) => v.stock < 30);
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -140,14 +149,14 @@ export default function ProductDetailsPage({
                 Product Gallery
               </h3>
               <div className="grid grid-cols-3 gap-2">
-                {product.images.map((image) => (
+                {product.images.map((image: any, index: number) => (
                   <div
-                    key={image.id}
+                    key={index}
                     className="aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted ring-primary transition-all hover:ring-2"
                   >
                     <img
-                      src={image.url || "/placeholder.svg"}
-                      alt={image.alt}
+                      src={getFullImageUrl(image.image_url)}
+                      alt={product?.product?.name}
                       className="h-full w-full object-cover"
                     />
                   </div>
@@ -160,13 +169,17 @@ export default function ProductDetailsPage({
           <div className="space-y-6 lg:col-span-2">
             {/* Title and Code */}
             <div>
-              <h1 className="mb-2 text-3xl font-bold">{product.name}</h1>
+              <h1 className="mb-2 text-3xl font-bold">
+                {product?.product?.name}
+              </h1>
               <div className="mb-4 flex items-center gap-3">
-                <Badge variant="outline">{product.category}</Badge>
-                <Badge variant="secondary">{product.productCode}</Badge>
+                <Badge variant="outline">
+                  {product?.product?.category_name}
+                </Badge>
+                <Badge variant="secondary">{product?.product?.code}</Badge>
               </div>
               <p className="leading-relaxed text-muted-foreground">
-                {product.description}
+                {product?.product?.description}
               </p>
             </div>
 
@@ -181,7 +194,9 @@ export default function ProductDetailsPage({
                     <span className="text-muted-foreground">
                       Product Price:
                     </span>
-                    <span className="text-2xl font-bold">₹{product.price}</span>
+                    <span className="text-2xl font-bold">
+                      {formatPrice(Number(product?.product?.price ?? 0))}
+                    </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Same price for all color variants (Inclusive of all taxes)
@@ -212,7 +227,7 @@ export default function ProductDetailsPage({
                         ⚠️ Low Stock Variants:
                       </p>
                       <div className="space-y-1">
-                        {getLowStockVariants().map((variant) => (
+                        {getLowStockVariants().map((variant: any) => (
                           <p
                             key={variant.id}
                             className="text-sm text-muted-foreground"
@@ -246,140 +261,63 @@ export default function ProductDetailsPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="grid" className="w-full">
-              <TabsList className="mb-6 grid w-full grid-cols-2">
-                <TabsTrigger value="grid">Grid View</TabsTrigger>
-                <TabsTrigger value="table">Table View</TabsTrigger>
-              </TabsList>
-
-              {/* Grid View */}
-              <TabsContent value="grid" className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {product.variants.map((variant) => (
-                    <Card
+            <div className="overflow-hidden rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead>Color</TableHead>
+                    <TableHead>Hex Code</TableHead>
+                    <TableHead className="text-right">Stock</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {product?.variants.map((variant: any) => (
+                    <TableRow
                       key={variant.id}
-                      className={`cursor-pointer transition-all ${
-                        selectedVariant?.id === variant.id
-                          ? "ring-2 ring-primary"
-                          : "hover:border-primary"
-                      }`}
-                      onClick={() => setSelectedVariant(variant)}
+                      className="transition-colors hover:bg-muted/50"
                     >
-                      <CardContent className="space-y-4 pt-6">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-semibold">{variant.color}</h3>
-                            {variant.stock < 30 && (
-                              <Badge variant="danger" className="text-xs">
-                                Low Stock
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-8 w-8 rounded-full border-2 border-border shadow-sm"
-                              style={{ backgroundColor: variant.hex }}
-                              title={variant.hex}
-                            />
-                            <span className="text-sm text-muted-foreground">
-                              {variant.hex}
-                            </span>
-                          </div>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="h-6 w-6 rounded-full border-2 border-border"
+                            style={{
+                              backgroundColor: variant?.hex ?? "#FFFF",
+                            }}
+                          />
+                          <span className="font-medium">
+                            {variant?.color ?? "#FFFF"}
+                          </span>
                         </div>
-
-                        <div className="space-y-2 border-t pt-2">
-                          <div className="flex justify-between">
-                            <span className="text-sm text-muted-foreground">
-                              Stock
-                            </span>
-                            <span className="text-lg font-bold">
-                              {variant.stock}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Stock Bar */}
-                        <div className="pt-2">
-                          <div className="h-2 w-full rounded-full bg-secondary">
-                            <div
-                              className={`h-2 rounded-full transition-all ${
-                                variant.stock > 50
-                                  ? "bg-green-500"
-                                  : variant.stock > 20
-                                    ? "bg-yellow-500"
-                                    : "bg-red-500"
-                              }`}
-                              style={{
-                                width: `${Math.min((variant.stock / 100) * 100, 100)}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">
+                        {variant?.hex ?? "#FFFF"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="text-lg font-bold">
+                          {variant?.stock}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {variant?.stock > 50 && (
+                          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+                            In Stock
+                          </Badge>
+                        )}
+                        {variant?.stock > 20 && variant?.stock <= 50 && (
+                          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+                            Medium Stock
+                          </Badge>
+                        )}
+                        {variant?.stock <= 20 && (
+                          <Badge variant="danger">Low Stock</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </div>
-              </TabsContent>
-
-              {/* Table View */}
-              <TabsContent value="table">
-                <div className="overflow-hidden rounded-lg border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead>Color</TableHead>
-                        <TableHead>Hex Code</TableHead>
-                        <TableHead className="text-right">Stock</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {product.variants.map((variant) => (
-                        <TableRow
-                          key={variant.id}
-                          className="transition-colors hover:bg-muted/50"
-                        >
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="h-6 w-6 rounded-full border-2 border-border"
-                                style={{ backgroundColor: variant.hex }}
-                              />
-                              <span className="font-medium">
-                                {variant.color}
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {variant.hex}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <span className="text-lg font-bold">
-                              {variant.stock}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {variant.stock > 50 && (
-                              <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
-                                In Stock
-                              </Badge>
-                            )}
-                            {variant.stock > 20 && variant.stock <= 50 && (
-                              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
-                                Medium Stock
-                              </Badge>
-                            )}
-                            {variant.stock <= 20 && (
-                              <Badge variant="danger">Low Stock</Badge>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-            </Tabs>
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
 
@@ -394,16 +332,18 @@ export default function ProductDetailsPage({
                 <div className="flex justify-between border-b py-2">
                   <span className="text-muted-foreground">Product Code</span>
                   <span className="font-mono font-semibold">
-                    {product.productCode}
+                    {product?.product?.code}
                   </span>
                 </div>
                 <div className="flex justify-between border-b py-2">
                   <span className="text-muted-foreground">Category</span>
-                  <span className="font-medium">{product.category}</span>
+                  <span className="font-medium">
+                    {product?.product?.category_name}
+                  </span>
                 </div>
                 <div className="flex justify-between border-b py-2">
                   <span className="text-muted-foreground">Total Variants</span>
-                  <span className="font-bold">{product.variants.length}</span>
+                  <span className="font-bold">{product?.variants.length}</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-muted-foreground">Total Stock</span>
@@ -422,13 +362,15 @@ export default function ProductDetailsPage({
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between border-b py-2">
-                  <span className="text-muted-foreground">Product Price</span>
-                  <span className="text-lg font-bold">₹{product.price}</span>
+                  <span className="text-muted-foreground">Producpt Price</span>
+                  <span className="text-lg font-bold">
+                    {formatPrice(Number(product?.product?.price ?? 0))}
+                  </span>
                 </div>
                 <div className="flex justify-between border-b py-2">
                   <span className="text-muted-foreground">Applies To</span>
                   <span className="font-medium">
-                    All {product.variants.length} Color Variants
+                    All {product?.variants.length} Color Variants
                   </span>
                 </div>
                 <div className="flex justify-between py-2">

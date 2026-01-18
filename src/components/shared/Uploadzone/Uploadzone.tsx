@@ -149,7 +149,8 @@ const UploadZone: React.FC<UploadZoneProps> = ({
         if (previews.length + newPreviews.length >= maxFiles) {
           setIsError(true);
         }
-        setShowUploadBox(false);
+        if (previews.length + newPreviews.length >= maxFiles) 
+          setShowUploadBox(false);
       }
     }
   };
@@ -371,14 +372,14 @@ const UploadZone: React.FC<UploadZoneProps> = ({
 
   return (
     <div>
-      <div className="space-y-4">
+      <div className="space-y-2 flex flex-col">
+        {label && (
+          <label className="text-body-sm font-medium text-dark">
+            {label}
+          </label>
+        )}
         {show && showUploadBox && (
-          <div className="flex flex-col">
-            {label && (
-              <label className="mb-1 text-body-sm font-medium text-dark">
-                {label}
-              </label>
-            )}
+          <div className="flex flex-col w-full">
             <div className="relative cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-4 text-center">
               <div className="flex flex-col items-center gap-2">
                 <config.icon className="h-8 w-8 text-gray-400" />

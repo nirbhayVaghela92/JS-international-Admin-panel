@@ -1,8 +1,15 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
+
 import InputGroup from "@/components/custom-elements/InputGroup";
 import { CustomButton } from "@/components/custom-elements/button";
 import CustomDropdown from "@/components/custom-elements/CustomDropdown";
+import UploadZone from "@/components/shared/Uploadzone/Uploadzone";
+
 import {
   Dialog,
   DialogContent,
@@ -12,13 +19,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import UploadZone from "@/components/shared/Uploadzone/Uploadzone";
+
 import { useCreateProduct, useUpdateProduct } from "@/hooks/queries";
-import { ProductSchema, ProductSchemaType } from "@/utils/schemas";
-import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { useGetDropdowns } from "@/hooks/useGetDropdowns";
+import { ProductSchema, ProductSchemaType } from "@/utils/schemas";
 
 interface AddEditProductDialogProps {
   isOpen: boolean;
@@ -29,16 +33,15 @@ interface AddEditProductDialogProps {
 
 export const AddEditProductDialog = ({
   isOpen,
-  mode,
   onClose,
+  mode,
   productDetails,
 }: AddEditProductDialogProps) => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
-  const [imagesPreview, setImagesPreview] = useState<string>();
 
-  const { mutateAsync: createProduct, isPending: isCreatingProduct } =
+  const { mutateAsync: createProduct, isPending: isCreating } =
     useCreateProduct();
-  const { mutateAsync: updateProduct, isPending: isUpdatingProduct } =
+  const { mutateAsync: updateProduct, isPending: isUpdating } =
     useUpdateProduct();
 
   const { categoryDropdown } = useGetDropdowns({
@@ -47,35 +50,36 @@ export const AddEditProductDialog = ({
 
   const {
     control,
-    getValues,
     register,
     handleSubmit,
     reset,
-    watch,
     setValue,
+    watch,
+    getValues,
     formState: { errors },
   } = useForm<ProductSchemaType>({
     mode: "onChange",
+    resolver: yupResolver(ProductSchema),
     defaultValues: {
       product_id: "",
       name: "",
       category: undefined,
       price: 0,
-      quantity: 0,
       cover_image: undefined,
       images: [],
-      color_options: "",
+      color_variants: [],
       description: "",
     },
-    resolver: yupResolver(ProductSchema),
   });
 
-  const productId = watch("product_id");
-  const name = watch("name");
-  const category = watch("category");
-  const price = watch("price");
-  const quantity = watch("quantity");
-  const colorOptions = watch("color_options");
+  const {
+    fields: colorFields,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: "color_variants",
+  });
 
   const onSubmit = async (data: ProductSchemaType) => {
     const formData = new FormData();
@@ -84,25 +88,17 @@ export const AddEditProductDialog = ({
     formData.append("productName", data.name);
     formData.append("category", data.category!);
     formData.append("price", data.price.toString());
-    formData.append("quantity", data.quantity.toString());
 
     if (data.cover_image) {
       formData.append("coverImage", data.cover_image as Blob);
     }
 
-    if (data.images && data.images.length > 0) {
-      data.images.forEach((image, index) => {
-        formData.append(`images`, image as Blob);
-      });
+    if (data.images?.length) {
+      data.images.forEach((img) => formData.append("images", img as Blob));
     }
 
-    // Convert comma-separated string to array
-    if (data.color_options) {
-      const colorsArray = data.color_options
-        .split(",")
-        .map((color) => color.trim())
-        .filter((color) => color.length > 0);
-      formData.append("color_options", JSON.stringify(colorsArray));
+    if (data.color_variants?.length) {
+      formData.append("color_variants", JSON.stringify(data.color_variants));
     }
 
     if (data.description) {
@@ -116,80 +112,40 @@ export const AddEditProductDialog = ({
       await createProduct(formData);
     }
 
-    onClose();
     reset();
+    onClose();
   };
 
+  /* ================= Edit Mode ================= */
   useEffect(() => {
     if (mode === "edit" && productDetails) {
       reset({
-        product_id: productDetails.productId || "",
-        name: productDetails.name || "",
-        category: productDetails.category || undefined,
-        price: productDetails.price || 0,
-        quantity: productDetails.quantity || 0,
-        cover_image: productDetails.cover_image,
-        images: productDetails.images || [],
-        color_options: productDetails.color_options?.join(", ") || "",
-        description: productDetails.description || "",
+        product_id: productDetails.productId,
+        name: productDetails.name,
+        category: productDetails.category,
+        price: productDetails.price,
+        color_variants: productDetails.color_variants || [],
+        description: productDetails.description,
       });
 
-      if (productDetails.cover_image) {
-        setCoverPreview(productDetails.cover_image);
-      }
-      if (productDetails.images?.length > 0) {
-        setImagesPreview(productDetails.images);
-      }
+      setCoverPreview(productDetails.cover_image || null);
     } else {
-      reset({
-        product_id: "",
-        name: "",
-        category: undefined,
-        price: 0,
-        quantity: 0,
-        cover_image: undefined,
-        images: [],
-        color_options: "",
-        description: "",
-      });
+      reset();
       setCoverPreview(null);
-      setImagesPreview("");
     }
   }, [mode, productDetails, reset]);
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          reset();
-          setCoverPreview(null);
-          setImagesPreview("");
-          onClose();
-        }
-      }}
-    >
-      <DialogContent
-        className="max-h-[85vh] overflow-y-auto border-none sm:max-w-2xl"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onInteractOutside={(e) => {
-          const target = e.target as Element;
-          if (target.closest("[data-radix-popper-content-wrapper]")) {
-            e.preventDefault();
-          }
-        }}
-      >
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Add New Product" : "Edit Product"}
+            {mode === "create" ? "Add Product" : "Edit Product"}
           </DialogTitle>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="modaldatascroll grid gap-6 py-4"
-        >
-          {/* Product ID and Name */}
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
+          {/* Product ID & Name */}
           <div className="grid grid-cols-2 gap-4">
             <InputGroup
               autoComplete="off"
@@ -214,140 +170,113 @@ export const AddEditProductDialog = ({
             />
           </div>
 
-          {/* Category */}
-          <div className="grid grid-cols-1 gap-4">
+          {/* Category & Price */}
+          <div className="grid grid-cols-2 gap-4">
             <CustomDropdown
               label="Category"
-              placeholder="Select category"
-              width="w-full"
-              options={
-                categoryDropdown || [
-                  { label: "Men's Watch", value: "Men's Watch" },
-                  { label: "Women's Watch", value: "Women's Watch" },
-                  { label: "Purses", value: "Purses" },
-                  { label: "Jewellery", value: "Jewellery" },
-                ]
-              }
+              options={categoryDropdown!}
+              value={watch("category") ?? ""}
+              onChange={(val) => setValue("category", val as string)}
               error={!!errors.category}
               errorMessage={errors.category?.message}
-              showClearButton={false}
-              value={category ?? ""}
-              onChange={(option) => {
-                setValue("category", option as string);
-              }}
             />
-          </div>
 
-          {/* Price and Quantity */}
-          <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Price ($)"
-              placeholder="Enter price"
-              type="text"
-              value={price || ""}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*\.?\d{0,2}$/.test(value)) {
-                  setValue("price", value ? parseFloat(value) : 0);
-                }
-              }}
-              className="w-full"
-              autoComplete="off"
+              label="Price"
+              type="number"
+              {...register("price")}
               error={!!errors.price}
               errorMessage={errors.price?.message}
             />
-
-            <Input
-              label="Quantity"
-              placeholder="Enter quantity"
-              type="text"
-              value={quantity || ""}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*$/.test(value)) {
-                  setValue("quantity", value ? parseInt(value) : 0);
-                }
-              }}
-              className="w-full"
-              autoComplete="off"
-              error={!!errors.quantity}
-              errorMessage={errors.quantity?.message}
-            />
           </div>
 
-          {/* Color Options */}
-          <div className="grid grid-cols-1 gap-4">
-            <InputGroup
-              autoComplete="off"
-              className="w-full"
-              type="text"
-              label="Color Options"
-              placeholder="Enter colors separated by commas (e.g., Black, Brown, Gold)"
-              error={!!errors.color_options}
-              errorMessage={errors.color_options?.message}
-              {...register("color_options")}
-            />
+          {/* ================= Color Variants ================= */}
+          <div className="grid gap-3">
+            <label className="text-sm font-medium">
+              Color Variants & Stock
+            </label>
+
+            {colorFields.map((field, index) => (
+              <div
+                key={field.id}
+                className="flex items-center gap-3 rounded-md border p-3"
+              >
+                <input
+                  type="color"
+                  {...register(`color_variants.${index}.color`)}
+                  className="h-10 w-14"
+                />
+
+                <Input
+                  placeholder="#000000"
+                  {...register(`color_variants.${index}.color`)}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="Qty"
+                  {...register(`color_variants.${index}.quantity`, {
+                    valueAsNumber: true,
+                  })}
+                  className="w-28"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="text-red-500"
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => append({ color: "#000000", quantity: 0 })}
+              className="flex items-center gap-2 text-sm text-primary"
+            >
+              <FiPlus /> Add Color Variant
+            </button>
+
+            {errors.color_variants && (
+              <p className="text-sm text-red-500">
+                {errors.color_variants.message}
+              </p>
+            )}
           </div>
 
-          {/* Cover Image Upload */}
-          <div className="grid grid-cols-1 gap-4">
-            <UploadZone
-              name="cover_image"
-              label="Cover Image"
-              multiple={false}
-              getValues={getValues}
-              setValue={setValue}
-              error={errors?.cover_image?.message}
-              show={true}
-              setPreview={setCoverPreview}
-              preview={coverPreview ?? ""}
-            />
-          </div>
-
-          {/* Related Images Upload */}
-          <div className="grid grid-cols-1 gap-4">
-            <UploadZone
-              name="images"
-              label="Related Images (Multiple)"
-              multiple={true}
-              getValues={getValues}
-              setValue={setValue}
-              error={errors?.images?.message}
-              show={true}
-              setPreview={setImagesPreview}
-              // preview={imagesPreview}
-            />
-          </div>
+          {/* Cover Image */}
+          <UploadZone
+            name="cover_image"
+            label="Cover Image"
+            multiple={false}
+            getValues={getValues}
+            setValue={setValue}
+            setPreview={setCoverPreview}
+            preview={coverPreview ?? ""}
+            error={errors.cover_image?.message}
+            show
+          />
 
           {/* Description */}
-          <div className="grid grid-cols-1 gap-4">
-            <Textarea
-              label="Description"
-              className="border-gray-300 focus:border-primary focus:ring-primary"
-              errorMessage={errors.description?.message}
-              {...register("description")}
-              placeholder="Add product description"
-              rows={4}
-            />
-          </div>
+          <Textarea
+            label="Description"
+            {...register("description")}
+            errorMessage={errors.description?.message}
+          />
 
           <DialogFooter>
             <CustomButton
               type="button"
-              onClick={() => {
-                reset();
-                setCoverPreview(null);
-                setImagesPreview("");
-                onClose();
-              }}
               variant="outline"
               label="Cancel"
+              onClick={onClose}
             />
-
             <CustomButton
               type="submit"
-              label={mode === "create" ? "Create Product" : "Update Product"}
-              loading={isCreatingProduct || isUpdatingProduct}
+              label={mode === "create" ? "Create" : "Update"}
+              loading={isCreating || isUpdating}
             />
           </DialogFooter>
         </form>

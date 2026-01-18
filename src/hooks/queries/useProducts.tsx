@@ -1,31 +1,48 @@
-import { FiltersTypes, ParmasType } from "@/utils/types";
+import { FiltersTypes } from "@/utils/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import useGetData from "../useGetData";
 import {
+  changeProductStatus,
   createProduct,
+  deleteProduct,
   editProduct,
+  getProductDetails,
   getProductsList,
 } from "@/services/products.service";
 import { useValidatedQuery } from "../useValidatedQuery";
 
-export const useGetProductList = (params: ParmasType) => {
-  const { status, page, limit, search, sort_by, sort_order, region } = params;
+export const useGetProductList = (params: FiltersTypes) => {
+  const { status, page, limit, search, sort_by, sort_order, category } = params;
   const res = useGetData({
     params: {
       status,
       limit: limit || 10,
+      deleted: false,
       ...(search && { search }),
       ...(sort_by && { sort_by }),
       ...(sort_order && { sort_order }),
-      ...(region && { region_id: region }),
+      ...(category && { category }),
     },
     page: page || 1,
     queryKey: "useGetProductList",
     fn: getProductsList,
   });
-  return useValidatedQuery(res);
+  return res;
 };
+
+export const useGetProductDetails = (slug: string, enable: boolean = true) => {
+  const response = useQuery({
+    queryKey: ["useGetProductDetails", slug, enable],
+    queryFn: async () => {
+      const res = await getProductDetails(slug);
+      return res;
+    },
+    enabled: !!enable,
+  });
+  return useValidatedQuery(response);
+};
+
 
 // Create product
 export const useCreateProduct = () => {
@@ -69,56 +86,36 @@ export const useUpdateProduct = () => {
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const response = useMutation({
+    mutationKey: ["useDeleteProduct"],
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/products/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to delete product");
-      }
-
-      return response.json();
+      const res = await deleteProduct({ id });
+      return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products-list"] });
-      toast.success("Product deleted successfully");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to delete product");
+      queryClient.invalidateQueries({
+        queryKey: ["useGetProductList"],
+      });
     },
   });
+  return response;
 };
 
 // Change product status
 export const useChangeProductStatus = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async ({ id, status }: { id: number; status: "A" | "I" }) => {
-      const response = await fetch(`/api/products/${id}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to change product status");
-      }
-
-      return response.json();
+  const response = useMutation({
+    mutationKey: ["useChangeProductStatus"],
+    mutationFn: async ({ id, status }: { id: number; status: 0 | 1 }) => {
+      const res = await changeProductStatus({ id, status });
+      return res;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products-list"] });
-      toast.success("Product status changed successfully");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to change product status");
+      queryClient.invalidateQueries({
+        queryKey: ["useGetProductList"],
+      });
     },
   });
+  return response;
 };

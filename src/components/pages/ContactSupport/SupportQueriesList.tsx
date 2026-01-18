@@ -137,7 +137,6 @@ export default function SupportQueriesList() {
     total_items: 0,
     sort_by: undefined,
     sort_order: "asc",
-    region: undefined,
   });
 
   const { statusDropdown } = useGetDropdowns({
@@ -243,7 +242,7 @@ export default function SupportQueriesList() {
               onChange={(option) => {
                 setFilters((prev) => ({
                   ...prev,
-                  status: option as "A" | "I",
+                  status: option as any,
                 }));
               }}
             />
@@ -370,9 +369,9 @@ export default function SupportQueriesList() {
         {/* Pagination */}
         {mockQueryResponse?.data.length > 0 && (
           <TablePagination
-            currentPage={filters.page}
-            totalPages={filters.total_pages}
-            itemsPerPage={filters.limit}
+            currentPage={filters.page!}
+            totalPages={filters.total_pages!}
+            itemsPerPage={filters.limit!}
             totalItems={filters.total_items || 0}
             onPageChange={(page: number) => {
               setFilters((prev) => ({

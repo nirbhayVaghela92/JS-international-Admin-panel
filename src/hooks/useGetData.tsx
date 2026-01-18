@@ -1,25 +1,21 @@
 "use client";
+import { FiltersTypes } from "@/utils/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
 
 interface UseGetDataParams {
-  params: Record<string, any>; // Dynamic filters as key-value pairs
+  params: FiltersTypes; // Dynamic filters as key-value pairs
   queryKey: string;
   limit?: number;
   page: number;
-  fn: (params: Record<string, any>) => Promise<any>;
+  fn: (params: FiltersTypes) => Promise<any>;
 }
 
-const useGetData = ({
-  params,
-  queryKey,
-  fn,
-  page,
-}: UseGetDataParams) => {
+const useGetData = ({ params, queryKey, fn, page }: UseGetDataParams) => {
   const [currentPage, setCurrentPage] = useState(page);
 
   // Keep track of previous filters to detect changes
-  const prevFilters = useRef(params);
+  const prevFilters: any = useRef(params);
 
   // Reset page if page change
   useEffect(() => {
@@ -28,7 +24,9 @@ const useGetData = ({
 
   useEffect(() => {
     const filtersChanged = Object.keys(params).some(
-      (key) => prevFilters.current[key] !== params[key],
+      (key) =>
+        prevFilters.current[key as keyof FiltersTypes] !==
+        params[key as keyof FiltersTypes],
     );
 
     if (filtersChanged) {
@@ -49,7 +47,7 @@ const useGetData = ({
       const res = await fn(queryParams); // Make the dynamic API call
       return res;
     },
-    placeholderData: keepPreviousData, 
+    placeholderData: keepPreviousData,
   });
 
   return response;

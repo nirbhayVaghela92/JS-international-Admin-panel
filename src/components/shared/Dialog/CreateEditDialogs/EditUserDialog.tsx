@@ -36,17 +36,6 @@ export function EditUserDialog({
   const { mutateAsync: updateUserDetails, isPending: isUpdatingUserDetails } =
     useUpdateUserDetails();
 
-  const {
-    countryDropdown,
-    stateDropdown,
-    cityDropdown,
-    genderDropdown,
-    regionDropdown,
-  } = useGetDropdowns({
-    isContryDropdown: true,
-    isRegionDropdown: true,
-    isGenderDropdown: true,
-  });
 
   const {
     register,
@@ -219,7 +208,7 @@ export function EditUserDialog({
                 height="sm"
               />
 
-              <CustomDropdown
+              {/* <CustomDropdown
                 label="Gender"
                 placeholder="Gender"
                 width="w-70"
@@ -231,7 +220,7 @@ export function EditUserDialog({
                   const selectedGender = option;
                   setValue("gender", selectedGender as "M" | "F" | "other");
                 }}
-              />
+              /> */}
 
 
               {/* <Input
@@ -253,7 +242,7 @@ export function EditUserDialog({
                 errorMessage={errors.zipcode?.message}
               /> */}
 
-              <CustomDropdown
+              {/* <CustomDropdown
                 label="Region"
                 placeholder="Region"
                 width="w-70"
@@ -265,7 +254,7 @@ export function EditUserDialog({
                   const selectedRegionId = option as string;
                   setValue("region_id", selectedRegionId);
                 }}
-              />
+              /> */}
             </div>
           </div>
           <div className="mt-5 flex justify-end gap-3">
