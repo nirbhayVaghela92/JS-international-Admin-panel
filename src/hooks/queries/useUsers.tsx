@@ -6,15 +6,11 @@ import {
   getUsersList,
   updateUserDetails,
 } from "@/services";
-import {
-
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useGetData from "@/hooks/useGetData";
 import { useValidatedQuery } from "../useValidatedQuery";
 import { FiltersTypes } from "@/utils/types";
+import { EditUserDetailsSchemaType } from "@/utils/schemas";
 
 export const useGetUsersList = (params: FiltersTypes) => {
   const { status, page, limit, search, sort_by, sort_order } = params;
@@ -25,7 +21,6 @@ export const useGetUsersList = (params: FiltersTypes) => {
       ...(search && { search }),
       ...(sort_by && { sort_by }),
       ...(sort_order && { sort_order }),
-
     },
     page: page || 1,
     queryKey: "useGetUsersList",
@@ -52,7 +47,7 @@ export const useChangeUserStatus = () => {
 
   const response = useMutation({
     mutationKey: ["useChangeUserStatus"],
-    mutationFn: async ({ id, status }: { id: number; status: "A" | "I" }) => {
+    mutationFn: async ({ id, status }: { id: number; status: 0 | 1 }) => {
       const res = await changeUserStatus({ id, status });
       return res;
     },
@@ -70,7 +65,7 @@ export const useUpdateUserDetails = () => {
 
   const response = useMutation({
     mutationKey: ["useUpdateUserDetails"],
-    mutationFn: async (body: FormData) => {
+    mutationFn: async (body: EditUserDetailsSchemaType) => {
       const res = await updateUserDetails(body);
       return res;
     },
@@ -100,5 +95,3 @@ export const useDeleteUser = () => {
   });
   return response;
 };
-
-

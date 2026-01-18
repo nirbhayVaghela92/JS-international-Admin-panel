@@ -171,7 +171,7 @@ export default function SupportQueriesList() {
   const handleStatusChange = async (id: number, checked: boolean) => {
     await changeUserStatus({
       id: id,
-      status: checked ? "I" : "A",
+      status: checked ? 0 : 1,
     });
   };
 

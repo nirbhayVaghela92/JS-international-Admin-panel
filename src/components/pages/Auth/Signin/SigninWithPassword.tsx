@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { signInSchema, SignInSchemaType } from "@/utils/schemas";
 import { useRouter } from "next/navigation";
 import { routes } from "@/constants/routes";
-import { useGetAdminDetails, useSignIn } from "@/hooks/queries";
+import {  useSignIn } from "@/hooks/queries";
 import Cookies from "js-cookie";
 import { LocalStorageSetItem } from "@/utils/helpers";
 import InputGroup from "@/components/custom-elements/InputGroup";

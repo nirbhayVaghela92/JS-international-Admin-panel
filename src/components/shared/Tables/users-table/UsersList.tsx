@@ -251,8 +251,8 @@ export default function UsersList() {
     isStatusDropdown: true,
   });
 
-  // const { data, isLoading } = useGetUsersList(filters);
-  const isLoading = false;
+  const { data, isLoading } = useGetUsersList(filters);
+  console.log(data, "data")
   const { mutateAsync: deleteUser, isPending: isDeleteingUser } =
     useDeleteUser();
   const { mutateAsync: changeUserStatus, isPending: isChangingUserStatus } =
@@ -281,7 +281,7 @@ export default function UsersList() {
   const handleStatusChange = async (id: number, checked: boolean) => {
     await changeUserStatus({
       id: id,
-      status: checked ? "I" : "A",
+      status: checked ? 0 : 1,
     });
   };
 

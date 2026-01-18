@@ -1,16 +1,13 @@
 import { apiClient } from "@/utils/api/apiClient";
 import { API } from "@/utils/api/apiUrl";
 import { errorHandler } from "@/utils/helpers";
-import { FiltersTypes} from "@/utils/types";
+import { FiltersTypes } from "@/utils/types";
 import toast from "react-hot-toast";
 
 export const getUsersList = async (body: FiltersTypes) => {
   let response;
   try {
-    response = await apiClient.post(API.getUsersList, body);
-    // if (response.status === 200) {
-    //   toast.success(response.data.message);
-    // }
+    response = await apiClient.get(API.getUsersList, { params: body });
   } catch (error: any) {
     response = error.response;
     toast.error(
@@ -45,13 +42,12 @@ export const changeUserStatus = async ({
   status,
 }: {
   id: number;
-  status: "A" | "I";
+  status: 0 | 1;
 }) => {
   let response;
   try {
-    response = await apiClient.post(API.changeUserStatus, {
-      user_id: id,
-      status,
+    response = await apiClient.put(API.changeUserStatus(id), {
+      active: status,
     });
     if (response.status === 200) {
       toast.success(response.data.message);
@@ -67,10 +63,10 @@ export const changeUserStatus = async ({
   return response;
 };
 
-export const updateUserDetails = async (body: FormData) => {
+export const updateUserDetails = async (body: any) => {
   let response;
   try {
-    response = await apiClient.put(API.updateUserDetails, body);
+    response = await apiClient.put(API.editUser(body?.id), body);
     if (response.status === 200) {
       toast.success(response.data.message);
     }
@@ -88,11 +84,7 @@ export const updateUserDetails = async (body: FormData) => {
 export const deleteUser = async ({ id }: { id: number }) => {
   let response;
   try {
-    response = await apiClient.delete(API.deleteUser, {
-      data: {
-        user_id: id,
-      },
-    });
+    response = await apiClient.delete(API.deleteUser(id));
     if (response.status === 200) {
       toast.success(response.data.message);
     }
@@ -106,4 +98,3 @@ export const deleteUser = async ({ id }: { id: number }) => {
   }
   return response;
 };
-

@@ -7,7 +7,6 @@ import {
   signIn,
   verifyForgotPasswordOtp,
 } from "@/services";
-import { getAdminDetailsById } from "@/services/general.service";
 import { SignInSchemaType } from "@/utils/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -89,38 +88,3 @@ export const useEditProfile = () => {
   return response;
 };
 
-export const useGetAdminDetails = () => {
-  const response = useMutation({
-    mutationKey: ["useGetAdminDetails"],
-    mutationFn: async (id:number) => {
-      const res = await getAdminDetailsById(id);
-      return res?.data?.data;
-    },
-    // staleTime: 5 * 60 * 1000, // 5 minutes
-    // gcTime: 30 * 60 * 1000, // 30 minutes
-    // refetchOnWindowFocus: false, // don't refetch when window/tab regains focus
-  });
-  return response;
-};
-
-// export const useAddProfileImage = () => {
-//   const response = useMutation({
-//     mutationKey: ["useAddProfileImage"],
-//     mutationFn: async (body: FormData) => {
-//       const res = await addProfileImageUpload(body);
-//       return res;
-//     },
-//   });
-//   return response;
-// }
-
-// export const useRemoveProfileImage = () => {
-//   const response = useMutation({
-//     mutationKey: ["useremoveProfileImage"],
-//     mutationFn: async () => {
-//       const res = await removeProfileImageUpload();
-//       return res;
-//     },
-//   });
-//   return response;
-// }

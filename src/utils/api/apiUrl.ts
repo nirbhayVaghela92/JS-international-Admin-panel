@@ -1,4 +1,5 @@
 import { changeProductStatus, deleteProduct } from "@/services/products.service";
+import { de } from "date-fns/locale";
 
 export const API = {
   signin: "/admin/login",
@@ -15,14 +16,11 @@ export const API = {
 
   getConfigs: "/common/config",
   // User APIs
-  getUsersList: "/admin/get-user-list",
-  getUserFollowerList: "/admin/get-user-follower-list",
-  getUserFollowingList: "/admin/get-user-following-list",
+  getUsersList: "/admin/users",
+  changeUserStatus: (id: number) => `/admin/users/${id}/status`,
+  deleteUser: (id: number) => `/admin/users/${id}`,
+  editUser: (id: number) => `/admin/users/${id}`,
   getUsersDetails: "/admin/get-user-profile",
-  getReportedUsersList: "/admin/get-reported-users",
-  getAppDownloadLink: "/qr-download",
-  exportUsersCSV: "/user/export-users",
-  getUserBussinessList: "/admin/user/businesses",
 
   // Products
   productsList: "/admin/products-listing",

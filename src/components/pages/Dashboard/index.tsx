@@ -2,7 +2,6 @@
 import Breadcrumb from "@/components/custom-elements/Breadcrumb";
 import { OverviewCardsGroup } from "@/components/shared/Cards/overview-cards";
 import { OverviewCardsSkeleton } from "@/components/shared/Cards/overview-cards/skeleton";
-import { useGetDashboardData } from "@/hooks/queries";
 
 const dashboardData = {
     total_users: 0,

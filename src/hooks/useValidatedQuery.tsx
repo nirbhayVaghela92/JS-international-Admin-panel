@@ -7,7 +7,7 @@ export const useValidatedQuery = (
   isInfinteQuery: boolean = false,
 ) => {
   const router = useRouter();
-  console.log(queryResult, "queryResult")
+  
   useEffect(() => {
     if (!queryResult.isLoading) {
       const status =
