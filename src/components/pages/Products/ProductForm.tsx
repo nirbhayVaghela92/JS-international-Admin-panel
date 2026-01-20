@@ -42,7 +42,9 @@ export function ProductForm({ mode }: ProductFormProps) {
   const { categoryDropdown } = useGetDropdowns({
     isCategoryDropdown: true,
   });
-  const { data: productDetails } = useGetProductDetails(String(slug), !!slug);
+  const { data: productDetails } = !!slug
+    ? useGetProductDetails(String(slug), !!slug)
+    : { data: null };
   const { mutateAsync: createProduct, isPending: isCreating } =
     useCreateProduct();
   const { mutateAsync: updateProduct, isPending: isUpdating } =

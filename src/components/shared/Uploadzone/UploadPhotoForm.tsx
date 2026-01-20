@@ -78,7 +78,7 @@ export const UploadPhotoForm = forwardRef<
               />
 
               <label htmlFor={name}>
-                <div className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 p-0.5 transition-opacity hover:opacity-80">
+                <div className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-primary p-0.5 transition-opacity hover:opacity-80">
                   <Pencil className="h-3 w-3 text-white" />
                 </div>
               </label>

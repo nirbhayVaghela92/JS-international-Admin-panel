@@ -1,7 +1,9 @@
 import { apiClient } from "@/utils/api/apiClient";
 import { API } from "@/utils/api/apiUrl";
 import { errorHandler } from "@/utils/helpers";
+import { EditUserDetailsSchemaType } from "@/utils/schemas";
 import { FiltersTypes } from "@/utils/types";
+import { fi } from "date-fns/locale";
 import toast from "react-hot-toast";
 
 export const getUsersList = async (body: FiltersTypes) => {
@@ -62,11 +64,15 @@ export const changeUserStatus = async ({
   }
   return response;
 };
-
-export const updateUserDetails = async (body: any) => {
+  
+export const updateUserDetails = async (body: EditUserDetailsSchemaType & { id: number }) => {
   let response;
   try {
-    response = await apiClient.put(API.editUser(body?.id), body);
+    response = await apiClient.put(API.editUser(body?.id), {
+      first_name: body.first_name,
+      last_name: body.last_name,
+      phone: body.phone_number,
+    });
     if (response.status === 200) {
       toast.success(response.data.message);
     }

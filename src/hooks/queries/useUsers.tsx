@@ -65,7 +65,7 @@ export const useUpdateUserDetails = () => {
 
   const response = useMutation({
     mutationKey: ["useUpdateUserDetails"],
-    mutationFn: async (body: EditUserDetailsSchemaType) => {
+    mutationFn: async (body: EditUserDetailsSchemaType & { id: number }) => {
       const res = await updateUserDetails(body);
       return res;
     },

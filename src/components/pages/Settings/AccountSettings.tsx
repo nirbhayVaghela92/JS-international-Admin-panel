@@ -121,7 +121,7 @@ export function AccountSettings() {
           </button>
 
           <CustomButton
-            className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90"
+            className="rounded-lg bg-primary px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90"
             type="submit"
             label={isPending ? "Saving..." : "Save"}
             disabled={isPending}

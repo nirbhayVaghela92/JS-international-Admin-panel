@@ -36,7 +36,6 @@ export function EditUserDialog({
   const { mutateAsync: updateUserDetails, isPending: isUpdatingUserDetails } =
     useUpdateUserDetails();
 
-
   const {
     register,
     setValue,
@@ -46,60 +45,22 @@ export function EditUserDialog({
     watch,
   } = useForm<EditUserDetailsSchemaType>({
     defaultValues: {
-      full_name: userDetails?.name,
-      bio: userDetails?.bio || "",
-      age: userDetails?.age ?? "",
-      username: userDetails?.username,
-      country_id: userDetails?.country ? String(userDetails?.country) : "",
-      state_id: userDetails?.state ? String(userDetails?.state) : "",
-      city_id: userDetails?.city ? String(userDetails?.city) : "",
+      first_name: userDetails?.first_name || "",
+      last_name: userDetails?.last_name || "",
       email: userDetails?.email,
-      gender: userDetails?.gender,
       phone_number: userDetails?.mobile_number,
-      profile_image: userDetails?.profile_image || null,
-      region_id: userDetails?.region?.id,
-      // zipcode: userDetails?.zipcode || "",
     },
     resolver: yupResolver(editUserDetailsSchema),
   });
 
-  const countryId = watch("country_id");
-  const stateId = watch("state_id");
-  const cityId = watch("city_id");
-  const gender = watch("gender");
-  const regionId = watch("region_id");
-
   const onSubmit = async (values: EditUserDetailsSchemaType) => {
-    const formData = new FormData();
-    // Append updated values
-    if (values.bio) formData.append("bio", values.bio || "");
-    formData.append("user_id", String(userDetails?.id));
-    formData.append("username", values.username);
-    formData.append("full_name", values.full_name);
-    formData.append("email", String(values.email));
-    formData.append("age", values.age?.toString() || "");
-    formData.append("gender", values.gender || "");
-    formData.append("mobile_number", values.phone_number);
-    formData.append("country_id", values.country_id?.toString() || "");
-    formData.append("state_id", values.state_id?.toString() || "");
-    formData.append("city_id", values.city_id?.toString() || "");
-    if (values.region_id)
-      formData.append("region_id", values.region_id?.toString() || "");
-    // if (values.zipcode) formData.append("zipcode", values.zipcode);
-    if (values.profile_image instanceof File) {
-      formData.append("profile_image", values.profile_image);
-    }
-
-    // const { data } = await updateUserDetails(formData);
-    const data= {
-      status: "true"
-    }
-
-    if (!data?.status || data?.status === "false") {
-      // toast.error(data?.message || "Failed to update profile.");
-      return;
-    }
-
+    const res = await updateUserDetails({
+      id: userDetails.id,
+      first_name: values.first_name,
+      last_name: values.last_name,
+      phone_number: values.phone_number,
+    });
+    console.log(res, "resresres");
     onClose();
   };
 
@@ -132,44 +93,28 @@ export function EditUserDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <Controller
-              name="profile_image"
-              control={control}
-              render={({ field: { onChange, onBlur, value, name } }) => (
-                <UploadPhotoForm
-                  name={name}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  error={!!errors.profile_image}
-                  errorMessage={errors.profile_image?.message}
-                />
-              )}
-            />
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <InputGroup
-                {...register("full_name")}
-                error={!!errors.full_name}
-                errorMessage={errors.full_name?.message}
+                {...register("first_name")}
+                error={!!errors.first_name}
+                errorMessage={errors.first_name?.message}
                 className="w-full"
                 type="text"
-                label="Full Name"
-                placeholder="Full Name"
+                label="First Name"
+                placeholder="First Name"
                 height="sm"
               />
 
               <InputGroup
-                {...register("username")}
-                error={!!errors.username}
-                errorMessage={errors.username?.message}
+                {...register("last_name")}
+                error={!!errors.last_name}
+                errorMessage={errors.last_name?.message}
                 className="w-full"
                 type="text"
-                name="username"
-                label="Username"
-                placeholder="Username"
+                label="Last Name"
+                placeholder="Last Name"
                 height="sm"
               />
-
               <InputGroup
                 {...register("email")}
                 error={!!errors.email}
@@ -180,6 +125,7 @@ export function EditUserDialog({
                 label="Email"
                 placeholder="Email"
                 height="sm"
+                disabled
               />
               <InputGroup
                 {...register("phone_number")}
@@ -192,72 +138,6 @@ export function EditUserDialog({
                 placeholder="Phone Number"
                 height="sm"
               />
-              <Textarea
-                label="Bio"
-                errorMessage={errors.bio?.message}
-                {...register("bio")}
-                placeholder="Add Bio"
-                maxLength={150}
-              />
-              <InputGroup
-                {...register("age")}
-                error={!!errors.age}
-                errorMessage={errors.age?.message}
-                className="w-full"
-                type="number"
-                name="age"
-                label="Age"
-                placeholder="Age"
-                height="sm"
-              />
-
-              {/* <CustomDropdown
-                label="Gender"
-                placeholder="Gender"
-                width="w-70"
-                options={genderDropdown!}
-                showClearButton={true}
-                onClear={() => setValue("gender", null)}
-                value={gender ?? ""}
-                onChange={(option) => {
-                  const selectedGender = option;
-                  setValue("gender", selectedGender as "M" | "F" | "other");
-                }}
-              /> */}
-
-
-              {/* <Input
-                label="Zipcode"
-                placeholder="Enter Zipcode"
-                type="text"
-                value={watch("zipcode")}
-                onChange={(e) => {
-                  const value = e.target.value;
-
-                  // Allow only digits (remove all non-digit characters)
-                  if (/^\d*$/.test(value)) {
-                    setValue("zipcode", String(value));
-                  }
-                }}
-                className="w-full"
-                autoComplete="off"
-                error={!!errors.zipcode}
-                errorMessage={errors.zipcode?.message}
-              /> */}
-
-              {/* <CustomDropdown
-                label="Region"
-                placeholder="Region"
-                width="w-70"
-                options={regionDropdown!}
-                showClearButton={true}
-                onClear={() => setValue("region_id", null)}
-                value={regionId ?? ""}
-                onChange={(option) => {
-                  const selectedRegionId = option as string;
-                  setValue("region_id", selectedRegionId);
-                }}
-              /> */}
             </div>
           </div>
           <div className="mt-5 flex justify-end gap-3">
@@ -271,7 +151,7 @@ export function EditUserDialog({
 
             <CustomButton
               loading={isUpdatingUserDetails}
-              className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90"
+              className="rounded-lg bg-primary px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90"
               type="submit"
               label="Save"
             />

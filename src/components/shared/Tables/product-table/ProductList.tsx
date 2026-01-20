@@ -235,7 +235,7 @@ export default function ProductList() {
         </div>
 
         {/* Table */}
-        <Table>
+        <Table className="w-full">
           <TableHeader>
             <TableRow>
               {columns.map(({ label, key, className }) => (
@@ -272,7 +272,7 @@ export default function ProductList() {
                     <TableCell className="font-medium">
                       {product?.code || "-"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="w-[350px] max-w-[350px]">
                       <div className="flex items-center gap-3">
                         {product?.main_image && (
                           <img

@@ -38,62 +38,12 @@ interface ProductImage {
   alt: string;
 }
 
-// Mock product data - replace with actual data fetching
-const mockProduct = {
-  id: "1",
-  name: "Casio Youth Watch",
-  description:
-    "Premium quality youth watch with digital display and water resistance. Perfect for everyday wear with modern design.",
-  productCode: "CYW-2024-001",
-  category: "Watches",
-  price: 2999,
-  coverImage: "/watch-product.jpg",
-  images: [
-    {
-      id: "1",
-      url: "/watch-front.png",
-      alt: "Front view",
-    },
-    {
-      id: "2",
-      url: "/watch-side.png",
-      alt: "Side view",
-    },
-    {
-      id: "3",
-      url: "/watch-back.png",
-      alt: "Back view",
-    },
-  ],
-  variants: [
-    {
-      id: "black",
-      color: "Black",
-      hex: "#000000",
-      stock: 45,
-    },
-    {
-      id: "blue",
-      color: "Blue",
-      hex: "#1e40af",
-      stock: 32,
-    },
-    {
-      id: "red",
-      color: "Red",
-      hex: "#dc2626",
-      stock: 28,
-    },
-  ],
-  totalStock: 105,
-};
-
 export default function ProductDetailsPage() {
   const { slug } = useParams();
   const { data: product, isLoading } = useGetProductDetails(String(slug));
 
   const router = useRouter();
-
+  const coverImage = product?.images.find((img: any) => img.is_primary);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null,
   );
@@ -135,7 +85,7 @@ export default function ProductDetailsPage() {
             <Card className="overflow-hidden">
               <div className="flex aspect-square items-center justify-center bg-muted">
                 <img
-                  src={product.coverImage || "/placeholder.svg"}
+                  src={coverImage?.image_url || "/placeholder.svg"}
                   alt={product.name}
                   className="h-full w-full object-cover"
                 />
@@ -149,18 +99,20 @@ export default function ProductDetailsPage() {
                 Product Gallery
               </h3>
               <div className="grid grid-cols-3 gap-2">
-                {product.images.map((image: any, index: number) => (
-                  <div
-                    key={index}
-                    className="aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted ring-primary transition-all hover:ring-2"
-                  >
-                    <img
-                      src={getFullImageUrl(image.image_url)}
-                      alt={product?.product?.name}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ))}
+                {product.images.map((image: any, index: number) =>
+                  image?.is_primary ? null : (
+                    <div
+                      key={index}
+                      className="aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted ring-primary transition-all hover:ring-2"
+                    >
+                      <img
+                        src={image.image_url}
+                        alt={product?.product?.name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -230,9 +182,15 @@ export default function ProductDetailsPage() {
                         {getLowStockVariants().map((variant: any) => (
                           <p
                             key={variant.id}
-                            className="text-sm text-muted-foreground"
+                            className="text-sm text-muted-foreground flex gap-2"
                           >
-                            {variant.color}:{" "}
+                            <div
+                              className="h-6 w-6 rounded-full border-2 border-border"
+                              style={{
+                                backgroundColor: variant?.color ?? "#FFFF",
+                              }}
+                            />{" "}
+                            :{/* {variant.color}:{" "} */}
                             <span className="font-semibold text-destructive">
                               {variant.stock}
                             </span>{" "}
@@ -268,7 +226,7 @@ export default function ProductDetailsPage() {
                     <TableHead>Color</TableHead>
                     <TableHead>Hex Code</TableHead>
                     <TableHead className="text-right">Stock</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
+
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -282,7 +240,7 @@ export default function ProductDetailsPage() {
                           <div
                             className="h-6 w-6 rounded-full border-2 border-border"
                             style={{
-                              backgroundColor: variant?.hex ?? "#FFFF",
+                              backgroundColor: variant?.color ?? "#FFFF",
                             }}
                           />
                           <span className="font-medium">
@@ -291,27 +249,12 @@ export default function ProductDetailsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="font-mono text-sm">
-                        {variant?.hex ?? "#FFFF"}
+                        {variant?.color ?? "#FFFF"}
                       </TableCell>
                       <TableCell className="text-right">
                         <span className="text-lg font-bold">
                           {variant?.stock}
                         </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {variant?.stock > 50 && (
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
-                            In Stock
-                          </Badge>
-                        )}
-                        {variant?.stock > 20 && variant?.stock <= 50 && (
-                          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
-                            Medium Stock
-                          </Badge>
-                        )}
-                        {variant?.stock <= 20 && (
-                          <Badge variant="danger">Low Stock</Badge>
-                        )}
                       </TableCell>
                     </TableRow>
                   ))}

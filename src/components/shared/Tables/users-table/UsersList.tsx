@@ -34,6 +34,7 @@ import InputGroup from "@/components/custom-elements/InputGroup";
 import UserActionDropdown from "../../User/UserActionDropdown";
 import { Loader } from "@/components/custom-elements/Loader";
 import { SortIcon } from "@/assets/icon";
+import { formatDate } from "@/utils/helpers/commonHelpers";
 
 
 interface UserType {
@@ -215,17 +216,6 @@ const dummyUsers = [
   },
 ];
 
-// Mock pagination response structure
-const mockUserResponse = {
-  data: dummyUsers,
-  pagination: {
-    page: 1,
-    limit: 15,
-    total: 12,
-    total_pages: 3,
-  },
-};
-
 export default function UsersList() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -295,12 +285,12 @@ export default function UsersList() {
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
-      page: mockUserResponse?.pagination.page ?? prev.page,
-      limit: mockUserResponse?.pagination.limit ?? prev.limit,
-      total_pages: mockUserResponse?.pagination.total_pages ?? prev.total_pages,
-      total_items: mockUserResponse?.pagination?.total ?? prev.total_items,
+      page: data?.pagination.page ?? prev.page,
+      limit: data?.pagination.limit ?? prev.limit,
+      total_pages: data?.pagination.total_pages ?? prev.total_pages,
+      total_items: data?.pagination?.total ?? prev.total_items,
     }));
-  }, [mockUserResponse, isLoading]);
+  }, [data, isLoading]);
 
   // Update URL when page changes (but avoid infinite loops)
   useEffect(() => {
@@ -423,19 +413,19 @@ export default function UsersList() {
             </TableBody>
           ) : (
             <TableBody>
-              {mockUserResponse?.data?.length > 0 ? (
-                mockUserResponse?.data?.map((user: any) => (
+              {data?.users?.length > 0 ? (
+                data?.users?.map((user: any) => (
                   <TableRow key={user?.id}>
                     <TableCell>
                       <div>
-                        {user?.first_name} {user?.last_name}
+                        {(`${user?.first_name ?? ""} ${user?.last_name ?? ""}`).trim() || "-"}
                       </div>
                     </TableCell>
-                    <TableCell>{user?.email}</TableCell>
-                    <TableCell>{user?.phoneNo}</TableCell>
+                    <TableCell>{user?.email || "-"}</TableCell>
+                    <TableCell>{user?.phone || "-"}</TableCell>
                     <TableCell>
                       <Switch
-                        checked={user?.status === "Active"}
+                        checked={user?.active}
                         onCheckedChange={() => {
                           setUserDetails(user);
                           setStatusModalOpen(true);
@@ -444,7 +434,7 @@ export default function UsersList() {
                       />
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
-                      {dayjs(user?.createdAt).format("DD MMM, YYYY")}
+                      {formatDate(user?.created_at) || "-"}
                     </TableCell>
                     <TableCell>
                       <UserActionDropdown
@@ -477,7 +467,7 @@ export default function UsersList() {
         </Table>
 
         {/* Pagination */}
-        {mockUserResponse?.data.length > 0 && (
+        {data?.users?.length > 0 && (
           <TablePagination
             currentPage={filters.page!}
             totalPages={filters.total_pages!}
@@ -497,7 +487,7 @@ export default function UsersList() {
       {isDialogOpen && userDetails && (
         <EditUserDialog
           userDetails={userDetails}
-          isOpen={true}
+          isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
         />
       )}
@@ -519,7 +509,7 @@ export default function UsersList() {
             if (userDetails?.id) {
               handleStatusChange(
                 userDetails?.id,
-                userDetails?.status === "Active" ? true : false,
+                userDetails?.status === "active" ? true : false,
               );
               setStatusModalOpen(false);
               setUserDetails(null);

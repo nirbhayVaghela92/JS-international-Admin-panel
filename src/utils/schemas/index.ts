@@ -84,58 +84,38 @@ export type EditAdminDetailsSchemaType = Yup.InferType<
 >;
 
 export const editUserDetailsSchema = Yup.object().shape({
-  // user_id: Yup.number().required("User ID is required"),
   email: Yup.string().trim().email("Invalid email address"),
-  // .required("Email is required"),
-  username: Yup.string().required("Username is required."),
-  full_name: Yup.string()
+  first_name: Yup.string()
     .trim()
-    .required("Full name is required")
-    .min(2, "Full name must be at least 2 characters"),
-  bio: Yup.string().optional().max(500, "Bio must be at most 500 characters"),
-  age: Yup.number()
-    .transform((value, originalValue) =>
-      originalValue === null || String(originalValue).trim() === ""
-        ? undefined
-        : value,
-    )
-    .nullable()
-    .min(1, "Age must be greater than 0")
-    .max(120, "Age must be less than or equal to 120"),
-
+    .required("First name is required")
+    .min(2, "First name must be at least 2 characters"),
+  last_name: Yup.string()
+    .trim()
+    .required("Last name is required")
+    .min(2, "Last name must be at least 2 characters"),
   phone_number: Yup.string()
     .required("Phone number is required.")
     .matches(/^[+]?[\d\s\-()]{7,20}$/, "Invalid phone number format")
     .max(15, "Phone number must be at most 15 characters"),
 
-  profile_image: Yup.mixed()
-    .optional()
-    .nullable()
-    .test(
-      "valid-type",
-      "Must be a valid URL or an image file (JPEG, PNG, GIF)",
-      (value) => {
-        if (!value) return true;
-        if (typeof value === "string") {
-          return /^https?:\/\//.test(value);
-        }
-        if (value instanceof File) {
-          const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-          return allowedTypes.includes(value.type);
-        }
-        return false;
-      },
-    ),
-
-  // zipcode: Yup.string().trim().required("ZIP code is required"),
-  region_id: Yup.string().nullable(),
-  city_id: Yup.string().nullable(),
-  country_id: Yup.string().nullable(),
-  state_id: Yup.string().nullable(),
-
-  gender: Yup.string()
-    .nullable()
-    .oneOf(["M", "F", "O", null], "Invalid gender"),
+  // profile_image: Yup.mixed()
+  //   .optional()
+  //   .nullable()
+  //   .test(
+  //     "valid-type",
+  //     "Must be a valid URL or an image file (JPEG, PNG, GIF)",
+  //     (value) => {
+  //       if (!value) return true;
+  //       if (typeof value === "string") {
+  //         return /^https?:\/\//.test(value);
+  //       }
+  //       if (value instanceof File) {
+  //         const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+  //         return allowedTypes.includes(value.type);
+  //       }
+  //       return false;
+  //     },
+  //   ),
 });
 export type EditUserDetailsSchemaType = Yup.InferType<
   typeof editUserDetailsSchema
