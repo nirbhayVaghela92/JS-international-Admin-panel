@@ -49,13 +49,6 @@ interface UserType {
   gender: string;
 }
 
-const columns = [
-  { label: "Name", key: "name" },
-  { label: "Email", key: "email" },
-  { label: "Phone No", key: "phoneNo" },
-  { label: "Status", key: "status", className: "text-center" },
-  { label: "Created At", key: "createdAt" },
-];
 
 const dummyUsers = [
   {
@@ -216,6 +209,15 @@ const dummyUsers = [
   },
 ];
 
+const columns = [
+  { label: "Name", key: "name" },
+  { label: "Email", key: "email" },
+  { label: "Phone No", key: "phoneNo" },
+  { label: "Status", key: "status", className: "text-center" },
+  { label: "Created At", key: "createdAt" },
+];
+
+
 export default function UsersList() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -261,9 +263,9 @@ export default function UsersList() {
   const handleSort = (key: keyof UserType) => {
     setFilters((prev) => ({
       ...prev,
-
-      sort_by:
-        key === "name" ? "full_name" : key === "createdAt" ? "created_at" : key,
+      // sort_by:
+      //   key === "name" ? "full_name" : key === "createdAt" ? "created_at" : key,
+      sort_by: key,
       sort_order: prev.sort_order === "asc" ? "desc" : "asc",
     }));
   };
@@ -391,7 +393,7 @@ export default function UsersList() {
                 >
                   {label}
                   {/* Add sort icon except for non-sortable columns */}
-                  {key !== "phoneNumber" && key !== "status" && (
+                  {(key === "name" || key === "createdAt") && (
                     <SortIcon
                       className="ml-1 inline h-4 w-4"
                       onClick={() => handleSort(key as keyof UserType)}
@@ -438,7 +440,7 @@ export default function UsersList() {
                     </TableCell>
                     <TableCell>
                       <UserActionDropdown
-                        onView={() => router.push(routes.users.view(user.id))}
+                        // onView={() => router.push(routes.users.view(user.id))}
                         onEdit={() => {
                           setUserDetails(user);
                           setIsDialogOpen(true);

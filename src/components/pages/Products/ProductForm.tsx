@@ -42,9 +42,10 @@ export function ProductForm({ mode }: ProductFormProps) {
   const { categoryDropdown } = useGetDropdowns({
     isCategoryDropdown: true,
   });
-  const { data: productDetails } = !!slug
-    ? useGetProductDetails(String(slug), !!slug)
-    : { data: null };
+  // const { data: productDetails } = !!slug
+  //   ? useGetProductDetails(String(slug), !!slug)
+  //   : { data: null };
+  const { data: productDetails } = useGetProductDetails(String(slug), mode === "edit", false);
   const { mutateAsync: createProduct, isPending: isCreating } =
     useCreateProduct();
   const { mutateAsync: updateProduct, isPending: isUpdating } =
@@ -84,7 +85,7 @@ export function ProductForm({ mode }: ProductFormProps) {
   });
 
   const colorVariants = watch("color_variants");
-
+  console.log(colorFields, "colorVariants");
   const handleColorChange = (index: number, color: string) => {
     setValue(`color_variants.${index}.color`, color);
   };
@@ -156,7 +157,7 @@ export function ProductForm({ mode }: ProductFormProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <Label htmlFor="product_id" className="mb-2 block">
-                Product ID <span className="text-destructive">*</span>
+                Product ID 
               </Label>
               <Input
                 id="product_id"
@@ -173,7 +174,7 @@ export function ProductForm({ mode }: ProductFormProps) {
 
             <div>
               <Label htmlFor="name" className="mb-2 block">
-                Product Name <span className="text-destructive">*</span>
+                Product Name 
               </Label>
               <Input
                 id="name"
@@ -202,7 +203,7 @@ export function ProductForm({ mode }: ProductFormProps) {
 
             <div>
               <Label htmlFor="price" className="mb-2 block">
-                Price <span className="text-destructive">*</span>
+                Price 
               </Label>
               <Input
                 id="price"
@@ -254,40 +255,6 @@ export function ProductForm({ mode }: ProductFormProps) {
         show
         maxFiles={5}
       />
-      {/* Cover Image */}
-      {/* <Card className="p-6">
-        <h2 className="mb-6 text-xl font-semibold text-foreground">
-          Cover Image
-        </h2>
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <label className="relative flex cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed border-border px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5 flex-1">
-              <FiUpload className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">
-                Click to upload cover image
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleCoverImageChange}
-                className="hidden"
-              />
-            </label>
-          </div>
-          {coverPreview && (
-            <div className="relative aspect-video overflow-hidden rounded-lg border border-border">
-              <img
-                src={coverPreview || "/placeholder.svg"}
-                alt="Cover preview"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
-          {errors.cover_image && (
-            <p className="text-sm text-destructive">{errors.cover_image.message}</p>
-          )}
-        </div>
-      </Card> */}
 
       {/* Product Image */}
       <UploadZone
@@ -302,49 +269,6 @@ export function ProductForm({ mode }: ProductFormProps) {
         cancle={true}
         show
       />
-      {/* <Card className="p-6">
-        <h2 className="mb-6 text-xl font-semibold text-foreground">
-          Product Images
-        </h2>
-        <div className="space-y-4">
-          <label className="relative flex cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed border-border px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5">
-            <FiImage className="h-5 w-5 text-muted-foreground" />
-            <div>
-              <span className="text-sm font-medium text-foreground">
-                Upload product images
-              </span>
-              <p className="text-xs text-muted-foreground">
-                (Maximum 5 images, PNG, JPG, WEBP)
-              </p>
-            </div>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImagesChange}
-              className="hidden"
-            />
-          </label>
-
-          {Object.keys(imagePreviewsMap).length > 0 && (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-              {Object.entries(imagePreviewsMap).map(([index, preview]) => (
-                <div
-                  key={index}
-                  className="relative aspect-square overflow-hidden rounded-lg border border-border"
-                >
-                  <img
-                    src={preview || "/placeholder.svg"}
-                    alt={`Product preview ${Number(index) + 1}`}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </Card> */}
-
       {/* Color Variants */}
       <Card className="p-6">
         <div className="mb-6 flex items-center justify-between">

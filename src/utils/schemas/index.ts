@@ -210,7 +210,7 @@ export const ProductSchema = Yup.object().shape({
           .required("Quantity is required"),
       }),
     )
-    .min(1, "At least one color variant is required")
+    .min(1, "At least one color variant is required, and each variant must have a quantity.")
     .required(),
 
   description: Yup.string()

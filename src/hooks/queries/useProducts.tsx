@@ -31,7 +31,7 @@ export const useGetProductList = (params: FiltersTypes) => {
   return res;
 };
 
-export const useGetProductDetails = (slug: string, enable: boolean = true) => {
+export const useGetProductDetails = (slug: string, enable: boolean = true, isValidate: boolean = true) => {
   const response = useQuery({
     queryKey: ["useGetProductDetails", slug, enable],
     queryFn: async () => {
@@ -40,7 +40,7 @@ export const useGetProductDetails = (slug: string, enable: boolean = true) => {
     },
     enabled: !!enable,
   });
-  return useValidatedQuery(response);
+  return isValidate ? useValidatedQuery(response) : response;
 };
 
 

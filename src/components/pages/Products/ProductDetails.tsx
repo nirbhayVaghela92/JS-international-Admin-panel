@@ -24,6 +24,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useGetProductDetails } from "@/hooks/queries";
 import { Loader } from "@/components/custom-elements/Loader";
 import { formatPrice, getFullImageUrl } from "@/utils/helpers/commonHelpers";
+import { cn } from "@/lib/utils";
 
 interface ProductVariant {
   id: string;
@@ -126,9 +127,9 @@ export default function ProductDetailsPage() {
               </h1>
               <div className="mb-4 flex items-center gap-3">
                 <Badge variant="outline">
-                  {product?.product?.category_name}
+                  {product?.product?.category_name ?? "Uncategorized"}
                 </Badge>
-                <Badge variant="secondary">{product?.product?.code}</Badge>
+                <Badge variant="secondary">{product?.product?.code ?? "Unknown"}</Badge>
               </div>
               <p className="leading-relaxed text-muted-foreground">
                 {product?.product?.description}
@@ -274,14 +275,14 @@ export default function ProductDetailsPage() {
               <div className="space-y-3">
                 <div className="flex justify-between border-b py-2">
                   <span className="text-muted-foreground">Product Code</span>
-                  <span className="font-mono font-semibold">
-                    {product?.product?.code}
+                  <span className={cn(product?.product?.code ? "font-semibold" : "font-normal")}>
+                    {product?.product?.code ?? "N/A"}
                   </span>
                 </div>
                 <div className="flex justify-between border-b py-2">
                   <span className="text-muted-foreground">Category</span>
                   <span className="font-medium">
-                    {product?.product?.category_name}
+                    {product?.product?.category_name ?? "N/A"}
                   </span>
                 </div>
                 <div className="flex justify-between border-b py-2">

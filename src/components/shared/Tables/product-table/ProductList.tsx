@@ -102,13 +102,14 @@ export default function ProductList() {
     }, 500);
   };
 
-  // const handleSort = (key: keyof ProductType) => {
-  //   setFilters((prev) => ({
-  //     ...prev,
-  //     sort_by: key === "createdAt" ? "created_at" : key,
-  //     sort_order: prev.sort_order === "asc" ? "desc" : "asc",
-  //   }));
-  // };
+  const handleSort = (key: keyof ProductType) => {
+    setFilters((prev) => ({
+      ...prev,
+      // sort_by: key === "createdAt" ? "created_at" : key,
+      sort_by: key,
+      sort_order: prev.sort_order === "asc" ? "desc" : "asc",
+    }));
+  };
 
   const handleStatusChange = async (id: number, checked: boolean) => {
     await changeProductStatus({
@@ -244,12 +245,12 @@ export default function ProductList() {
                   className={`cursor-pointer ${className ?? ""}`}
                 >
                   {label}
-                  {/* {key !== "status" && key !== "productId" && (
+                  {(key === "name" || key === "createdAt") && (
                     <SortIcon
                       className="ml-1 inline h-4 w-4"
                       onClick={() => handleSort(key as keyof ProductType)}
                     />
-                  )} */}
+                  )}
                 </TableHead>
               ))}
               <TableHead>Actions</TableHead>
