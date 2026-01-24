@@ -397,7 +397,7 @@ export default function ProductList() {
           }}
           currentStatus={productDetails?.active === 1 ? "A" : "I"}
           itemTitle={productDetails?.name || "product"}
-          disabled={isChangingProductStatus}
+          isLoading={isChangingProductStatus}
         />
       )}
     </>

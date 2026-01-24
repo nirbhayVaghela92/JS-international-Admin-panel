@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 function EditProductPage() {
-  return <AddProductClient isEditMode={true}/>;
+  return <AddProductClient mode="edit"/>;
 }
 
 export default EditProductPage;

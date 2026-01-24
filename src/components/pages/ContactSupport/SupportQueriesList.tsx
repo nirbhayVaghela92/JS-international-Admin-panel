@@ -488,7 +488,7 @@ export default function SupportQueriesList() {
           }}
           currentStatus={selectedQuery?.status === "Active" ? "A" : "I"}
           itemTitle={`query from ${selectedQuery?.name}`}
-          disabled={isChangingUserStatus}
+          isLoading={isChangingUserStatus}
         />
       )}
     </>

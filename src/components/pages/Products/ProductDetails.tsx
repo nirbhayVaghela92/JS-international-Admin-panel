@@ -44,7 +44,7 @@ export default function ProductDetailsPage() {
   const { data: product, isLoading } = useGetProductDetails(String(slug));
 
   const router = useRouter();
-  const coverImage = product?.images.find((img: any) => img.is_primary);
+  const coverImage = product?.images?.find((img: any) => img.is_primary);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null,
   );
@@ -100,14 +100,14 @@ export default function ProductDetailsPage() {
                 Product Gallery
               </h3>
               <div className="grid grid-cols-3 gap-2">
-                {product.images.map((image: any, index: number) =>
+                {product?.images?.map((image: any, index: number) =>
                   image?.is_primary ? null : (
                     <div
                       key={index}
                       className="aspect-square cursor-pointer overflow-hidden rounded-lg bg-muted ring-primary transition-all hover:ring-2"
                     >
                       <img
-                        src={image.image_url}
+                        src={image?.image_url}
                         alt={product?.product?.name}
                         className="h-full w-full object-cover"
                       />

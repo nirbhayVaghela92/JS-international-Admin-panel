@@ -1,5 +1,6 @@
 import React from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { CustomButton } from "@/components/custom-elements/button";
 
 interface StatusModalProps {
   isOpen: boolean;
@@ -8,8 +9,15 @@ interface StatusModalProps {
   currentStatus: string;
   itemTitle: string;
   dialogTitle: string;
-  actionType?: "approve" | "reject" | "suspend" | "unsuspend" | "activate" | "inactive" | "requested";
-  disabled?: boolean;
+  actionType?:
+    | "approve"
+    | "reject"
+    | "suspend"
+    | "unsuspend"
+    | "activate"
+    | "inactive"
+    | "requested";
+  isLoading?: boolean;
 }
 
 const StatusModal: React.FC<StatusModalProps> = ({
@@ -19,19 +27,26 @@ const StatusModal: React.FC<StatusModalProps> = ({
   onConfirm,
   currentStatus,
   itemTitle,
-  disabled,
+  isLoading,
 }) => {
   const getStatusInfo = () => {
-
     if (currentStatus === "suspend") {
       return { label: "Unsuspended", positive: true };
     } else if (currentStatus === "unsuspend") {
       return { label: "Suspended", positive: false };
-    } else if (currentStatus === "A" || currentStatus === "active" || currentStatus === "Active") {
+    } else if (
+      currentStatus === "A" ||
+      currentStatus === "active" ||
+      currentStatus === "Active"
+    ) {
       return { label: "Inactive", positive: false };
-    } else if (currentStatus === "I" || currentStatus === "inactive" || currentStatus === "Inactive") { 
+    } else if (
+      currentStatus === "I" ||
+      currentStatus === "inactive" ||
+      currentStatus === "Inactive"
+    ) {
       return { label: "Active", positive: true };
-    } else if(currentStatus === "requested" || currentStatus === "rejected") {
+    } else if (currentStatus === "requested" || currentStatus === "rejected") {
       return { label: "Approved", positive: true };
     } else if (currentStatus === "approved") {
       return { label: "Rejected", positive: false };
@@ -51,7 +66,9 @@ const StatusModal: React.FC<StatusModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
-        <DialogTitle className="mb-4 text-lg font-bold text-gray-800">{dialogTitle}</DialogTitle>
+        <DialogTitle className="mb-4 text-lg font-bold text-gray-800">
+          {dialogTitle}
+        </DialogTitle>
         <p className="mb-6 text-gray-600">
           Are you sure you want to mark this{" "}
           <span className="font-semibold">{itemTitle}</span> as{" "}
@@ -59,19 +76,17 @@ const StatusModal: React.FC<StatusModalProps> = ({
         </p>
 
         <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
+          <CustomButton
             className="rounded-lg bg-gray-200 px-4 py-2 text-gray-700 transition hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            disabled={disabled}
+            label="Cancel"
+            onClick={onClose}
+          />
+          <CustomButton
+            loading={isLoading}
+            className={`rounded-lg px-4 py-2 text-white transition ${buttonColor} disabled:cursor-not-allowed disabled:opacity-50`}
+            label="Confirm"
             onClick={onConfirm}
-            className={`px-4 py-2 rounded-lg text-white transition ${buttonColor} disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            Confirm
-          </button>
+          />
         </div>
       </DialogContent>
     </Dialog>

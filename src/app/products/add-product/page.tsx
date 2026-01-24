@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 function AddProductPage() {
-  return <AddEditProductClient />;
+  return <AddEditProductClient mode="create"/>;
 }
 
 export default AddProductPage;

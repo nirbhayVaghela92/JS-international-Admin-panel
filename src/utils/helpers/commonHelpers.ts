@@ -82,3 +82,10 @@ export function compactFormat(value: number) {
 
   return isNaN(value) ? "-" : formatter.format(value);
 }
+
+export const getkeyByLabel = (label: string, dropdown: DropdownOption[]):string => {
+  console.log(label, dropdown, "input");
+  const option = dropdown.find((opt) => opt.label === label);
+  console.log(option, "OP")
+  return option ? option.value as string : "";
+};

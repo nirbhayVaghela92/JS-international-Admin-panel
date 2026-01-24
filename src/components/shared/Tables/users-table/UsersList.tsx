@@ -36,7 +36,6 @@ import { Loader } from "@/components/custom-elements/Loader";
 import { SortIcon } from "@/assets/icon";
 import { formatDate } from "@/utils/helpers/commonHelpers";
 
-
 interface UserType {
   name: string;
   email: string;
@@ -48,7 +47,6 @@ interface UserType {
   number: string;
   gender: string;
 }
-
 
 const dummyUsers = [
   {
@@ -217,7 +215,6 @@ const columns = [
   { label: "Created At", key: "createdAt" },
 ];
 
-
 export default function UsersList() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -244,7 +241,7 @@ export default function UsersList() {
   });
 
   const { data, isLoading } = useGetUsersList(filters);
-  console.log(data, "data")
+  console.log(data, "data");
   const { mutateAsync: deleteUser, isPending: isDeleteingUser } =
     useDeleteUser();
   const { mutateAsync: changeUserStatus, isPending: isChangingUserStatus } =
@@ -275,6 +272,8 @@ export default function UsersList() {
       id: id,
       status: checked ? 0 : 1,
     });
+    setStatusModalOpen(false);
+    setUserDetails(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -420,7 +419,8 @@ export default function UsersList() {
                   <TableRow key={user?.id}>
                     <TableCell>
                       <div>
-                        {(`${user?.first_name ?? ""} ${user?.last_name ?? ""}`).trim() || "-"}
+                        {`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
+                          "-"}
                       </div>
                     </TableCell>
                     <TableCell>{user?.email || "-"}</TableCell>
@@ -513,13 +513,11 @@ export default function UsersList() {
                 userDetails?.id,
                 userDetails?.status === "active" ? true : false,
               );
-              setStatusModalOpen(false);
-              setUserDetails(null);
             }
           }}
           currentStatus={userDetails?.status === "Active" ? "A" : "I"}
           itemTitle={userDetails?.name || "user"}
-          disabled={isChangingUserStatus}
+          isLoading={isChangingUserStatus}
         />
       )}
     </>

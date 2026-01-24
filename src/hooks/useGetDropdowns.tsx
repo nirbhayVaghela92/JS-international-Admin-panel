@@ -34,9 +34,9 @@ export const useGetDropdowns = ({
   }
   if (isCategoryDropdown) {
     dropdowns.categoryDropdown = [
-      { label: "Men's Watch", value: "watches-men" },
-      { label: "Women's Watch", value: "watches-women" },
-      { label: "Purses", value: "purse" },
+      { label: "Watches for Men", value: "watches-men" },
+      { label: "Watches for Women", value: "watches-women" },
+      { label: "Purse", value: "purse" },
       { label: "Jewellery", value: "jewellery" },
     ];
   }

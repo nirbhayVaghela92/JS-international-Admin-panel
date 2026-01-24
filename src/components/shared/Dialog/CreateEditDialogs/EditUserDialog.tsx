@@ -48,7 +48,7 @@ export function EditUserDialog({
       first_name: userDetails?.first_name || "",
       last_name: userDetails?.last_name || "",
       email: userDetails?.email,
-      phone_number: userDetails?.mobile_number,
+      phone_number: userDetails?.phone,
     },
     resolver: yupResolver(editUserDetailsSchema),
   });
@@ -60,7 +60,7 @@ export function EditUserDialog({
       last_name: values.last_name,
       phone_number: values.phone_number,
     });
-    console.log(res, "resresres");
+
     onClose();
   };
 
