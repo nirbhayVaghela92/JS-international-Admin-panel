@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -16,9 +16,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useChangeUserStatus, useDeleteUser, useGetSupportQueryList } from "@/hooks/queries";
+import {
+  useChangeQueryStatus,
+  useChangeUserStatus,
+  useDeleteUser,
+  useGetSupportQueryList,
+} from "@/hooks/queries";
 import { FiltersTypes } from "@/utils/types";
 import dayjs from "dayjs";
 import CustomDropdown from "@/components/custom-elements/CustomDropdown";
@@ -29,94 +33,24 @@ import { useGetDropdowns } from "@/hooks/useGetDropdowns";
 import { CustomButton } from "@/components/custom-elements/button";
 import { routes } from "@/constants/routes";
 import StatusModal from "@/components/shared/Dialog/StatusChangeDialog";
-import { Eye, View, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import InputGroup from "@/components/custom-elements/InputGroup";
 import { Loader } from "@/components/custom-elements/Loader";
 import { SortIcon } from "@/assets/icon";
-import UserActionDropdown from "@/components/shared/User/UserActionDropdown";
 import { TableActionButton } from "@/components/custom-elements/TableActionButton";
-
-interface QueryType {
-  id: number;
-  name: string;
-  email: string;
-  phoneNo: string;
-  query: string;
-  status: "Active" | "Inactive" | "Pending";
-  createdAt: string;
-}
+import getQueryStatusBadge from "./QueryStatusBadge";
+import { formatDate } from "@/utils/helpers/commonHelpers";
+import { Switch } from "@/components/ui/switch";
 
 const columns = [
-  { label: "Name", key: "name" },
+  { label: "Name", key: "full_name" },
   { label: "Email", key: "email" },
   { label: "Phone No", key: "phoneNo" },
   { label: "Query Preview", key: "query" },
   { label: "Status", key: "status", className: "text-center" },
-  { label: "Created At", key: "createdAt" },
+  { label: "Change Status", key: "changeStatus", className: "text-center" },
+  { label: "Created At", key: "created_at" },
 ];
-
-const dummyQueries: QueryType[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phoneNo: "+1 (555) 123-4567",
-    query:
-      "I'm having trouble accessing my account. I've tried resetting my password multiple times but I'm not receiving the reset email. Can you help me resolve this issue?",
-    status: "Active",
-    createdAt: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@example.com",
-    phoneNo: "+1 (555) 234-5678",
-    query:
-      "When will the new features be available? I'm particularly interested in the bulk upload functionality that was mentioned in the last update.",
-    status: "Active",
-    createdAt: "2024-02-20T14:45:00Z",
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    email: "michael.chen@example.com",
-    phoneNo: "+1 (555) 345-6789",
-    query:
-      "I was charged twice for my subscription this month. Please refund one of the charges.",
-    status: "Inactive",
-    createdAt: "2024-03-10T09:15:00Z",
-  },
-  {
-    id: 4,
-    name: "Emily Rodriguez",
-    email: "emily.rodriguez@example.com",
-    phoneNo: "+1 (555) 456-7890",
-    query:
-      "How do I export my data? I need all my records from the past year in CSV format for my annual report.",
-    status: "Active",
-    createdAt: "2024-04-05T16:20:00Z",
-  },
-  {
-    id: 5,
-    name: "David Kim",
-    email: "david.kim@example.com",
-    phoneNo: "+1 (555) 567-8901",
-    query:
-      "The mobile app keeps crashing when I try to upload images. This has been happening for the past week.",
-    status: "Pending",
-    createdAt: "2024-05-12T11:30:00Z",
-  },
-];
-
-const mockQueryResponse = {
-  data: dummyQueries,
-  pagination: {
-    page: 1,
-    limit: 15,
-    total: 5,
-    total_pages: 1,
-  },
-};
 
 export default function SupportQueriesList() {
   const router = useRouter();
@@ -126,7 +60,7 @@ export default function SupportQueriesList() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [selectedQuery, setSelectedQuery] = useState<QueryType | null>(null);
+  const [selectedQuery, setSelectedQuery] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<FiltersTypes>({
     page: Number(searchParams?.get("page")) || 1,
@@ -138,15 +72,16 @@ export default function SupportQueriesList() {
     sort_by: undefined,
     sort_order: "asc",
   });
-  const { statusDropdown } = useGetDropdowns({
+  const { statusDropdown, queryStatusDropdown } = useGetDropdowns({
     isStatusDropdown: true,
+    isQueryStatusDropdown: true,
   });
-  const {data, isLoading} = useGetSupportQueryList(filters);
-console.log(data, "data")
+  const { data, isLoading } = useGetSupportQueryList(filters);
+
   const { mutateAsync: deleteUser, isPending: isDeleteingUser } =
     useDeleteUser();
-  const { mutateAsync: changeUserStatus, isPending: isChangingUserStatus } =
-    useChangeUserStatus();
+  const { mutateAsync: changeQueryStatus, isPending: isChangingQueryStatus } =
+    useChangeQueryStatus();
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -159,18 +94,18 @@ console.log(data, "data")
     }, 500);
   };
 
-  const handleSort = (key: keyof QueryType) => {
+  const handleSort = (key: any) => {
     setFilters((prev) => ({
       ...prev,
-      sort_by: key === "createdAt" ? "created_at" : key,
+      sort_by: key,
       sort_order: prev.sort_order === "asc" ? "desc" : "asc",
     }));
   };
 
   const handleStatusChange = async (id: number, checked: boolean) => {
-    await changeUserStatus({
+    await changeQueryStatus({
       id: id,
-      status: checked ? 0 : 1,
+      status: checked ? "resolved" : "pending",
     });
   };
 
@@ -189,13 +124,12 @@ console.log(data, "data")
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
-      page: mockQueryResponse?.pagination.page ?? prev.page,
-      limit: mockQueryResponse?.pagination.limit ?? prev.limit,
-      total_pages:
-        mockQueryResponse?.pagination.total_pages ?? prev.total_pages,
-      total_items: mockQueryResponse?.pagination?.total ?? prev.total_items,
+      page: data?.pagination.page ?? prev.page,
+      limit: data?.pagination.limit ?? prev.limit,
+      total_pages: data?.pagination.total_pages ?? prev.total_pages,
+      total_items: data?.pagination?.total ?? prev.total_items,
     }));
-  }, [mockQueryResponse, isLoading]);
+  }, [data, isLoading]);
 
   useEffect(() => {
     if (filters.page !== pageFromUrl) {
@@ -231,12 +165,12 @@ console.log(data, "data")
               placeholder="Search queries..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full py-2 pl-4"
+              className="py-2 pl-4"
             />
             <CustomDropdown
               placeholder="Filter by Status"
-              width="w-70"
-              options={statusDropdown!}
+              width="w-50"
+              options={queryStatusDropdown!}
               value={filters.status}
               onChange={(option) => {
                 setFilters((prev) => ({
@@ -293,10 +227,10 @@ console.log(data, "data")
                   className={`cursor-pointer ${className ?? ""}`}
                 >
                   {label}
-                  {key !== "phoneNo" && key !== "status" && key !== "query" && (
+                  {(key === "full_name" || key === "created_at") && (
                     <SortIcon
                       className="ml-1 inline h-4 w-4"
-                      onClick={() => handleSort(key as keyof QueryType)}
+                      onClick={() => handleSort(key)}
                     />
                   )}
                 </TableHead>
@@ -315,18 +249,21 @@ console.log(data, "data")
             </TableBody>
           ) : (
             <TableBody>
-              {mockQueryResponse?.data?.length > 0 ? (
-                mockQueryResponse?.data?.map((query: QueryType) => (
+              {data?.queries?.length > 0 ? (
+                data?.queries?.map((query: any) => (
                   <TableRow key={query?.id}>
-                    <TableCell>{query?.name}</TableCell>
+                    <TableCell>{query?.full_name}</TableCell>
                     <TableCell>{query?.email}</TableCell>
-                    <TableCell>{query?.phoneNo}</TableCell>
+                    <TableCell>{query?.phone_no}</TableCell>
                     <TableCell className="max-w-xs">
                       {truncateText(query?.query)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="cursor-pointer">
+                      {getQueryStatusBadge(query?.status)}
+                    </TableCell>
+                    <TableCell className="text-center">
                       <Switch
-                        checked={query?.status === "Active"}
+                        checked={query?.status === "pending"}
                         onCheckedChange={() => {
                           setSelectedQuery(query);
                           setStatusModalOpen(true);
@@ -335,7 +272,7 @@ console.log(data, "data")
                       />
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
-                      {dayjs(query?.createdAt).format("DD MMM, YYYY")}
+                      {formatDate(query?.created_at)}
                     </TableCell>
                     <TableCell>
                       <TableActionButton
@@ -366,7 +303,7 @@ console.log(data, "data")
         </Table>
 
         {/* Pagination */}
-        {mockQueryResponse?.data.length > 0 && (
+        {data?.queries.length > 0 && (
           <TablePagination
             currentPage={filters.page!}
             totalPages={filters.total_pages!}
@@ -396,7 +333,9 @@ console.log(data, "data")
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-semibold text-gray-700">Name</h4>
-                  <p className="text-sm text-gray-600">{selectedQuery.name}</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedQuery?.full_name}
+                  </p>
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-gray-700">Email</h4>
@@ -407,35 +346,21 @@ console.log(data, "data")
                     Phone Number
                   </h4>
                   <p className="text-sm text-gray-600">
-                    {selectedQuery.phoneNo}
+                    {selectedQuery.phone_no}
                   </p>
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-gray-700">
                     Status
                   </h4>
-                  <p className="text-sm text-gray-600">
-                    <span
-                      className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                        selectedQuery.status === "Active"
-                          ? "bg-green-100 text-green-800"
-                          : selectedQuery.status === "Inactive"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {selectedQuery.status}
-                    </span>
-                  </p>
+                  {getQueryStatusBadge(selectedQuery.status)}
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-gray-700">
                     Created At
                   </h4>
                   <p className="text-sm text-gray-600">
-                    {dayjs(selectedQuery.createdAt).format(
-                      "DD MMM, YYYY hh:mm A",
-                    )}
+                    {formatDate(selectedQuery.created_at)}
                   </p>
                 </div>
                 {/* <div>
@@ -479,15 +404,15 @@ console.log(data, "data")
             if (selectedQuery?.id) {
               handleStatusChange(
                 selectedQuery?.id,
-                selectedQuery?.status === "Active" ? true : false,
+                selectedQuery?.status === "pending" ? true : false,
               );
               setStatusModalOpen(false);
               setSelectedQuery(null);
             }
           }}
-          currentStatus={selectedQuery?.status === "Active" ? "A" : "I"}
+          currentStatus={selectedQuery?.status === "pending" ? "A" : "I"}
           itemTitle={`query from ${selectedQuery?.name}`}
-          isLoading={isChangingUserStatus}
+          isLoading={isChangingQueryStatus}
         />
       )}
     </>

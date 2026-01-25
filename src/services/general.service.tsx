@@ -1,7 +1,7 @@
 import { apiClient } from "@/utils/api/apiClient";
 import { API } from "@/utils/api/apiUrl";
 import { errorHandler } from "@/utils/helpers";
-import { FiltersTypes } from "@/utils/types";
+import { FiltersTypes, QueryStatusType } from "@/utils/types";
 import toast from "react-hot-toast";
 
 export const listSupportQueries = async (body: FiltersTypes) => {
@@ -11,6 +11,47 @@ export const listSupportQueries = async (body: FiltersTypes) => {
     // if (response.status === 200) {
     //   toast.success(response.data.message);
     // }
+  } catch (error: any) {
+    response = error.response;
+    toast.error(
+      error?.response?.data?.message ??
+        "Something went wrong. Please try again.",
+    );
+    errorHandler(response.status);
+  }
+  return response;
+};
+
+export const chnageQueryStatus = async ({
+  id,
+  status,
+}: {
+  id: number;
+  status: QueryStatusType;
+}) => {
+  let response;
+  try {
+    response = await apiClient.put(API.changeSupportQueryStatus(id), {
+      status,
+    });
+    if (response.status === 200) {
+      toast.success(response.data.message);
+    }
+  } catch (error: any) {
+    response = error.response;
+    toast.error(
+      error?.response?.data?.message ??
+        "Something went wrong. Please try again.",
+    );
+    errorHandler(response.status);
+  }
+  return response;
+};
+  
+export const getDashboardData = async () => {
+  let response;
+  try {
+    response = await apiClient.get(API.getDashbaoardData);
   } catch (error: any) {
     response = error.response;
     toast.error(

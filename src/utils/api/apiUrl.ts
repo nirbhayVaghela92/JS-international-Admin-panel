@@ -32,4 +32,8 @@ export const API = {
 
   // support queries
   getSupportQueriesList: "/admin/support-queries",
+  changeSupportQueryStatus: (id: number) => `/admin/support-queries/${id}/status`,
+
+  // Dashboard data
+  getDashboardData: "/admin/dashboard",
 };

@@ -22,3 +22,5 @@ export type CategoryType =
   | "purse"
   | "jewellery";
 export type FileType = "image" | "audio" | "video" | "media";
+
+export type QueryStatusType = "pending" | "resolved";
