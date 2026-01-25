@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 export const listSupportQueries = async (body: FiltersTypes) => {
   let response;
   try {
-    response = await apiClient.get(API.getSupportQueriesList, { params: body });
+    response = await apiClient.post(API.getSupportQueriesList, { ...body });
     // if (response.status === 200) {
     //   toast.success(response.data.message);
     // }
@@ -47,7 +47,7 @@ export const chnageQueryStatus = async ({
   }
   return response;
 };
-  
+
 export const getDashboardData = async () => {
   let response;
   try {
