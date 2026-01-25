@@ -6,13 +6,10 @@ export const metadata: Metadata = {
   title: "Support Quries",
 };
 
-
 const SupportPage = () => {
   return   <>
       <Breadcrumb pageName="Support Quries" />
-      <div>
         <SupportQueriesList />
-      </div>
     </>;
 };
 

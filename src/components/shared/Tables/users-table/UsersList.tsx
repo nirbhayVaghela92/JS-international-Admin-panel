@@ -511,11 +511,11 @@ export default function UsersList() {
             if (userDetails?.id) {
               handleStatusChange(
                 userDetails?.id,
-                userDetails?.status === "active" ? true : false,
+                userDetails?.active === 1 ? true : false,
               );
             }
           }}
-          currentStatus={userDetails?.status === "Active" ? "A" : "I"}
+          currentStatus={userDetails?.active === 1 ? "A" : "I"}
           itemTitle={userDetails?.name || "user"}
           isLoading={isChangingUserStatus}
         />

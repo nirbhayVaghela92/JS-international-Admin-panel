@@ -134,7 +134,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
           value={value}
           defaultValue={defaultValue}
           className={cn(
-            "w-full rounded-lg border bg-white text-sm outline-none transition ",
+            "w-[300px] rounded-lg border bg-white text-sm outline-none transition ",
             type === "file"
               ? getFileStyles(props.fileStyleVariant!)
               : "px-3 py-2 text-sm text-dark placeholder:text-dark-6 dark:text-white",

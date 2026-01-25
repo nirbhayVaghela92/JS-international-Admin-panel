@@ -164,7 +164,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
     const currentFiles = getValues(name);
     if (typeof currentFiles[index] === "string") {
       setRemovedImages([
-        currentFiles[index]?.split("/product/")[1],
+        currentFiles[index],
         ...removedImages,
       ]);
     }

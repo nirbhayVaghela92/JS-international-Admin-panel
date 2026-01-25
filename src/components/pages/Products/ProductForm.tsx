@@ -33,6 +33,7 @@ interface ProductFormProps {
 export function ProductForm({ mode }: ProductFormProps) {
   const router = useRouter();
   const { slug } = useParams();
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
   const { categoryDropdown } = useGetDropdowns({
     isCategoryDropdown: true,
   });
@@ -98,6 +99,10 @@ export function ProductForm({ mode }: ProductFormProps) {
     formData.append("category", data.category!);
     formData.append("price", data.price.toString());
 
+    const removedImagesIds = productDetails?.images
+      ?.filter((img: any) => removedImages.includes(img.image_url))
+      .map((img: any) => img.id);
+    console.log(removedImagesIds, "removedImages");
     if (data.cover_image) {
       formData.append("coverImage", data.cover_image as Blob);
     }
@@ -114,8 +119,12 @@ export function ProductForm({ mode }: ProductFormProps) {
       formData.append("description", data.description);
     }
 
+    if (removedImagesIds?.length) {
+      formData.append("removedImg", JSON.stringify(removedImagesIds));
+    }
+
     if (mode === "edit" && productDetails) {
-      formData.append("id", productDetails.id);
+      formData.append("id", productDetails?.product?.id);
       await updateProduct(formData);
     } else {
       await createProduct(formData);
@@ -124,7 +133,7 @@ export function ProductForm({ mode }: ProductFormProps) {
     // reset();
     router.push(routes.products.list());
   };
-
+  // console.log(removedImages, "removedImages")
   useEffect(() => {
     // console.log(product, "product")
     if (data && categoryDropdown) {
@@ -143,14 +152,16 @@ export function ProductForm({ mode }: ProductFormProps) {
         description: product?.product?.description || "",
         cover_image: coverImageURL || undefined,
         images:
-          product?.images?.map((img: any) => img?.image_url) || [],
+          product?.images
+            ?.filter((img: any) => img.is_primary !== 1)
+            .map((img: any) => img.image_url) || [],
         color_variants:
           product?.variants?.map((p: any) => ({
             color: p.color,
             quantity: p.stock,
           })) || [],
       });
-      setProductDetails(product?.product);
+      setProductDetails(product);
       replace(
         product?.variants?.map((p: any) => ({
           color: p.color,
@@ -285,6 +296,10 @@ export function ProductForm({ mode }: ProductFormProps) {
             description="(Maximum 5 images, PNG, JPG, WEBP)"
             error={errors.images?.message}
             cancle={true}
+            maxFiles={5}
+            fileType="image"
+            removedImages={removedImages}
+            setRemovedImages={setRemovedImages}
             show
           />
           {/* Color Variants */}

@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "jsinternational.store",
-        port: "",
+        pathname: "/**",
       },
     ],
   },

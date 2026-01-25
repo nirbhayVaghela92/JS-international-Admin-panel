@@ -29,4 +29,7 @@ export const API = {
   editProduct: (id: number) => `/admin/products/${id}`,
   changeProductStatus: (id:number) => `/admin/products/${id}/change-status`,
   deleteProduct: (id:number) => `/admin/products/${id}`,
+
+  // support queries
+  getSupportQueriesList: "/admin/support-queries",
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useChangeUserStatus, useDeleteUser } from "@/hooks/queries";
+import { useChangeUserStatus, useDeleteUser, useGetSupportQueryList } from "@/hooks/queries";
 import { FiltersTypes } from "@/utils/types";
 import dayjs from "dayjs";
 import CustomDropdown from "@/components/custom-elements/CustomDropdown";
@@ -138,12 +138,11 @@ export default function SupportQueriesList() {
     sort_by: undefined,
     sort_order: "asc",
   });
-
   const { statusDropdown } = useGetDropdowns({
     isStatusDropdown: true,
   });
-
-  const isLoading = false;
+  const {data, isLoading} = useGetSupportQueryList(filters);
+console.log(data, "data")
   const { mutateAsync: deleteUser, isPending: isDeleteingUser } =
     useDeleteUser();
   const { mutateAsync: changeUserStatus, isPending: isChangingUserStatus } =

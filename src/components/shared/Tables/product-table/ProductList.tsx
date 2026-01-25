@@ -33,6 +33,7 @@ import { SortIcon } from "@/assets/icon";
 import { AddEditProductDialog } from "../../Dialog/CreateEditDialogs/AddEditProductDialog";
 import UserActionDropdown from "../../User/UserActionDropdown";
 import { formatDate, formatPrice } from "@/utils/helpers/commonHelpers";
+import Image from "next/image";
 
 interface ProductType {
   name: string;
@@ -85,7 +86,7 @@ export default function ProductList() {
 
   const { mutateAsync: deleteProduct, isPending: isDeletingProduct } =
     useDeleteProduct();
-    
+
   const {
     mutateAsync: changeProductStatus,
     isPending: isChangingProductStatus,
@@ -130,11 +131,10 @@ export default function ProductList() {
       ...prev,
       page: data?.data?.pagination.page ?? prev.page,
       limit: data?.data?.pagination.limit ?? prev.limit,
-      total_pages:
-        data?.data?.pagination.total_pages ?? prev.total_pages,
+      total_pages: data?.data?.pagination.total_pages ?? prev.total_pages,
       total_items: data?.data?.pagination?.total ?? prev.total_items,
     }));
-  }, [ isLoading]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (filters.page !== pageFromUrl) {
@@ -170,7 +170,7 @@ export default function ProductList() {
               placeholder="Search products..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full py-2 pl-4"
+              className="py-2 pl-4"
             />
             <CustomDropdown
               placeholder="Filter by Status"
@@ -318,7 +318,9 @@ export default function ProductList() {
                         onView={() =>
                           router.push(routes.products.view(product.slug))
                         }
-                        onEdit={() => router.push(routes.products.edit(product.slug))}
+                        onEdit={() =>
+                          router.push(routes.products.edit(product.slug))
+                        }
                         onDelete={() => {
                           setIsDeleteOpen(true);
                           setProductId(product.id);
@@ -387,10 +389,7 @@ export default function ProductList() {
           onClose={() => setStatusModalOpen(false)}
           onConfirm={() => {
             if (productDetails?.id) {
-              handleStatusChange(
-                productDetails?.id,
-                !!productDetails?.active,
-              );
+              handleStatusChange(productDetails?.id, !!productDetails?.active);
               setStatusModalOpen(false);
               setProductDetails(null);
             }

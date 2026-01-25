@@ -50,5 +50,6 @@ export const protectedRoutes: string[] = [
   routes.settings.changePassword,
   routes.settings.editProfile,
   "/users",
-  "/products"
+  "/products",
+  "/support-queries",
 ];
