@@ -17,24 +17,20 @@ import {
   useGetUsersList,
 } from "@/hooks/queries";
 import { FiltersTypes } from "@/utils/types";
-import dayjs from "dayjs";
 import CustomDropdown from "@/components/custom-elements/CustomDropdown";
 import { paginationDropdownOptions } from "@/utils/data/dropdowns";
 import TablePagination from "@/components/shared/CustomPagination/TablePagination";
 import { DeleteDialog } from "@/components/shared/Dialog/DeleteDialog/DeleteDialog";
 import { useGetDropdowns } from "@/hooks/useGetDropdowns";
-import { CustomButton } from "@/components/custom-elements/button";
 import { routes } from "@/constants/routes";
 import { EditUserDialog } from "@/components/shared/Dialog/CreateEditDialogs/EditUserDialog";
 import StatusModal from "@/components/shared/Dialog/StatusChangeDialog";
-
-import { X } from "lucide-react";
-
-import InputGroup from "@/components/custom-elements/InputGroup";
 import UserActionDropdown from "../../User/UserActionDropdown";
 import { Loader } from "@/components/custom-elements/Loader";
 import { SortIcon } from "@/assets/icon";
 import { formatDate } from "@/utils/helpers/commonHelpers";
+import { FilterBar } from "@/components/custom-elements/FilterBar";
+import { DataTable } from "@/components/table-components/DataTable";
 
 interface UserType {
   name: string;
@@ -49,11 +45,12 @@ interface UserType {
 }
 
 const columns = [
-  { label: "Name", key: "name" },
-  { label: "Email", key: "email" },
-  { label: "Phone No", key: "phoneNo" },
-  { label: "Status", key: "status", className: "text-center" },
-  { label: "Created At", key: "createdAt" },
+  { key: "name", label: "Name", sortable: true },
+  { key: "email", label: "Email" },
+  { key: "phoneNo", label: "Phone" },
+  { key: "status", label: "Status" },
+  { key: "createdAt", label: "Created At", sortable: true },
+  { key: "actions", label: "Actions" },
 ];
 
 export default function UsersList() {
@@ -81,8 +78,16 @@ export default function UsersList() {
     isStatusDropdown: true,
   });
 
+  const filtersConfig = [
+    {
+      key: "status",
+      placeholder: "Filter by Status",
+      width: "w-50",
+      options: statusDropdown!,
+    },
+  ];
+
   const { data, isLoading } = useGetUsersList(filters);
-  console.log(data, "data");
   const { mutateAsync: deleteUser, isPending: isDeleteingUser } =
     useDeleteUser();
   const { mutateAsync: changeUserStatus, isPending: isChangingUserStatus } =
@@ -98,11 +103,9 @@ export default function UsersList() {
     }, 500);
   };
 
-  const handleSort = (key: keyof UserType) => {
+  const handleSort = (key: any) => {
     setFilters((prev) => ({
       ...prev,
-      // sort_by:
-      //   key === "name" ? "full_name" : key === "createdAt" ? "created_at" : key,
       sort_by: key,
       sort_order: prev.sort_order === "asc" ? "desc" : "asc",
     }));
@@ -152,56 +155,34 @@ export default function UsersList() {
     <>
       <div className="overflow-x-auto rounded-lg bg-white p-8 pt-0 shadow-lg">
         {/* Filters */}
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
-          <div className="relative flex items-center gap-2 pt-2">
-            <InputGroup
-              name="search"
-              icon={
-                <X
-                  className="h-5 w-5 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 shadow-sm transition-colors duration-200 hover:bg-gray-200 hover:text-gray-700"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setFilters((prev) => ({ ...prev, search: "" }));
-                  }}
-                />
-              }
-              label=""
-              type="text"
-              placeholder="Search here..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className="w-full"
-            />
-            <CustomDropdown
-              placeholder="Filter by Status"
-              width="w-70"
-              options={statusDropdown!}
-              value={filters.status}
-              onChange={(option) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  status: option as any,
-                }));
-              }}
-            />
-
-            {filters.status && (
-              <CustomButton
-                className="p-0 pl-2"
-                onClick={() => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    search: "",
-                    status: undefined,
-                  }));
-                  setSearchTerm("");
-                }}
-                type="button"
-                label="Clear Filter"
-                variant="clear"
-              />
-            )}
-          </div>
+        <div className="mt-3 flex flex-col items-center justify-between gap-4 md:flex-row">
+          <FilterBar
+            searchValue={searchTerm}
+            onSearchChange={handleSearch}
+            onSearchClear={() => {
+              setSearchTerm("");
+              setFilters((prev) => ({ ...prev, search: "" }));
+            }}
+            filters={filtersConfig}
+            values={{
+              search: filters.search,
+              status: filters.status,
+            }}
+            onChange={(key, value) => {
+              setFilters((prev) => ({
+                ...prev,
+                [key]: value,
+              }));
+            }}
+            onClearFilters={() => {
+              setFilters((prev) => ({
+                ...prev,
+                search: "",
+                status: undefined,
+              }));
+              setSearchTerm("");
+            }}
+          />
 
           <div className="flex items-center gap-2">
             <span className="whitespace-nowrap text-sm text-gray-600">
@@ -223,107 +204,74 @@ export default function UsersList() {
         </div>
 
         {/* Table */}
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map(({ label, key, className }) => (
-                <TableHead
-                  key={key}
-                  className={`cursor-pointer ${className ?? ""}`}
-                >
-                  {label}
-                  {/* Add sort icon except for non-sortable columns */}
-                  {(key === "name" || key === "createdAt") && (
-                    <SortIcon
-                      className="ml-1 inline h-4 w-4"
-                      onClick={() => handleSort(key as keyof UserType)}
-                    />
-                  )}
-                </TableHead>
-              ))}
-              <TableHead>Actions</TableHead>
+        <DataTable
+          columns={columns}
+          data={data?.users}
+          isLoading={isLoading}
+          colSpan={6}
+          onSort={handleSort}
+          renderRow={(user: any) => (
+            <TableRow key={user?.id}>
+              {/* Name */}
+              <TableCell>
+                {`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
+                  "-"}
+              </TableCell>
+
+              {/* Email */}
+              <TableCell>{user?.email || "-"}</TableCell>
+
+              {/* Phone */}
+              <TableCell>{user?.phone || "-"}</TableCell>
+
+              {/* Status */}
+              <TableCell>
+                <Switch
+                  checked={user?.active}
+                  onCheckedChange={() => {
+                    setUserDetails(user);
+                    setStatusModalOpen(true);
+                  }}
+                  className="data-[state=checked]:bg-primary"
+                />
+              </TableCell>
+
+              {/* Created At */}
+              <TableCell className="whitespace-nowrap">
+                {formatDate(user?.created_at) || "-"}
+              </TableCell>
+
+              {/* Actions */}
+              <TableCell>
+                <UserActionDropdown
+                  onEdit={() => {
+                    setUserDetails(user);
+                    setIsDialogOpen(true);
+                  }}
+                  onDelete={() => {
+                    setIsDeleteOpen(true);
+                    setUserId(user.id);
+                  }}
+                />
+              </TableCell>
             </TableRow>
-          </TableHeader>
-
-          {isLoading ? (
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={9} rowSpan={9} className="text-center">
-                  <Loader />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          ) : (
-            <TableBody>
-              {data?.users?.length > 0 ? (
-                data?.users?.map((user: any) => (
-                  <TableRow key={user?.id}>
-                    <TableCell>
-                      <div>
-                        {`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
-                          "-"}
-                      </div>
-                    </TableCell>
-                    <TableCell>{user?.email || "-"}</TableCell>
-                    <TableCell>{user?.phone || "-"}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={user?.active}
-                        onCheckedChange={() => {
-                          setUserDetails(user);
-                          setStatusModalOpen(true);
-                        }}
-                        className="data-[state=checked]:bg-primary"
-                      />
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      {formatDate(user?.created_at) || "-"}
-                    </TableCell>
-                    <TableCell>
-                      <UserActionDropdown
-                        // onView={() => router.push(routes.users.view(user.id))}
-                        onEdit={() => {
-                          setUserDetails(user);
-                          setIsDialogOpen(true);
-                        }}
-                        onDelete={() => {
-                          setIsDeleteOpen(true);
-                          setUserId(user.id);
-                        }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={9}
-                    rowSpan={9}
-                    className="h-[55vh] text-center"
-                  >
-                    No Data Found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
           )}
-        </Table>
-
-        {/* Pagination */}
-        {data?.users?.length > 0 && (
-          <TablePagination
-            currentPage={filters.page!}
-            totalPages={filters.total_pages!}
-            itemsPerPage={filters.limit!}
-            totalItems={filters.total_items || 0}
-            onPageChange={(page: number) => {
-              setFilters((prev) => ({
-                ...prev,
-                page: page,
-              }));
-            }}
-          />
-        )}
+          pagination={
+            data?.users?.length > 0
+              ? {
+                  currentPage: filters.page!,
+                  totalPages: filters.total_pages!,
+                  itemsPerPage: filters.limit!,
+                  totalItems: filters.total_items || 0,
+                  onPageChange: (page) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      page,
+                    })),
+                }
+              : undefined
+          }
+        />
       </div>
 
       {/* Dialogs */}

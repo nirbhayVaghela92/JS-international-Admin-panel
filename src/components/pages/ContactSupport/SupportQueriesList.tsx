@@ -40,15 +40,17 @@ import getQueryStatusBadge from "./QueryStatusBadge";
 import { formatDate } from "@/utils/helpers/commonHelpers";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { FilterBar } from "@/components/custom-elements/FilterBar";
+import { DataTable } from "@/components/table-components/DataTable";
 
 const columns = [
-  { label: "Name", key: "full_name" },
+  { label: "Full Name", key: "full_name", sortable: true },
   { label: "Email", key: "email" },
   { label: "Phone No", key: "phoneNo" },
   { label: "Query Preview", key: "query" },
   { label: "Status", key: "status", className: "text-center" },
-  { label: "Change Status", key: "changeStatus", className: "text-center" },
-  { label: "Created At", key: "created_at" },
+  { label: "Toggle", key: "toggle", className: "text-center" },
+  { label: "Created At", key: "created_at", sortable: true },
 ];
 
 export default function SupportQueriesList() {
@@ -81,6 +83,15 @@ export default function SupportQueriesList() {
     useDeleteUser();
   const { mutateAsync: changeQueryStatus, isPending: isChangingQueryStatus } =
     useChangeQueryStatus();
+
+  const filtersConfig = [
+    {
+      key: "status",
+      placeholder: "Filter by Status",
+      width: "w-50",
+      options: queryStatusDropdown!,
+    },
+  ];
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -147,55 +158,34 @@ export default function SupportQueriesList() {
       <div className="overflow-x-auto rounded-lg bg-white p-8 pt-0 shadow-lg">
         {/* Filters */}
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="relative flex items-center gap-2 pt-2">
-            <InputGroup
-              name="search"
-              icon={
-                <X
-                  className="h-5 w-5 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 shadow-sm transition-colors duration-200 hover:bg-gray-200 hover:text-gray-700"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setFilters((prev) => ({ ...prev, search: "" }));
-                  }}
-                />
-              }
-              label=""
-              type="text"
-              placeholder="Search queries..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className="py-2 pl-4"
-            />
-            <CustomDropdown
-              placeholder="Filter by Status"
-              width="w-50"
-              options={queryStatusDropdown!}
-              value={filters.status}
-              onChange={(option) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  status: option as any,
-                }));
-              }}
-            />
-
-            {filters.status && (
-              <CustomButton
-                className="p-0 pl-2"
-                onClick={() => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    search: "",
-                    status: undefined,
-                  }));
-                  setSearchTerm("");
-                }}
-                type="button"
-                label="Clear Filter"
-                variant="clear"
-              />
-            )}
-          </div>
+          <FilterBar
+            searchValue={searchTerm}
+            onSearchChange={handleSearch}
+            onSearchClear={() => {
+              setSearchTerm("");
+              setFilters((prev) => ({ ...prev, search: "" }));
+            }}
+            filters={filtersConfig}
+            values={{
+              search: filters.search,
+              status: filters.status,
+            }}
+            onChange={(key, value) => {
+              setFilters((prev) => ({
+                ...prev,
+                [key]: value,
+              }));
+            }}
+            onClearFilters={() => {
+              setFilters((prev) => ({
+                ...prev,
+                search: "",
+                status: undefined,
+              }));
+              setSearchTerm("");
+            }}
+            // className="pt-2"
+          />
 
           <div className="flex items-center gap-2">
             <span className="whitespace-nowrap text-sm text-gray-600">
@@ -216,114 +206,83 @@ export default function SupportQueriesList() {
           </div>
         </div>
 
-        {/* Table */}
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map(({ label, key, className }) => (
-                <TableHead
-                  key={key}
-                  className={`cursor-pointer ${className ?? ""}`}
-                >
-                  {label}
-                  {(key === "full_name" || key === "created_at") && (
-                    <SortIcon
-                      className="ml-1 inline h-4 w-4"
-                      onClick={() => handleSort(key)}
-                    />
-                  )}
-                </TableHead>
-              ))}
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          {isLoading ? (
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={7} className="text-center">
-                  <Loader />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          ) : (
-            <TableBody>
-              {data?.queries?.length > 0 ? (
-                data?.queries?.map((query: any) => (
-                  <TableRow key={query?.id}>
-                    <TableCell>{query?.full_name}</TableCell>
-                    <TableCell>{query?.email}</TableCell>
-                    <TableCell>{query?.phone_no}</TableCell>
-                    <TableCell className="max-w-xs">
-                      {truncateText(query?.query)}
-                    </TableCell>
-                    <TableCell className="cursor-pointer">
-                      {getQueryStatusBadge(query?.status)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Switch
-                        checked={query?.status === "pending"}
-                        onCheckedChange={() => {
-                          setSelectedQuery(query);
-                          setStatusModalOpen(true);
-                        }}
-                        className="data-[state=checked]:bg-primary"
-                      />
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      {formatDate(query?.created_at)}
-                    </TableCell>
-                    <TableCell>
-                      <TableActionButton
-                        Icon={Eye}
-                        color="text-indigo-600"
-                        label="View Query"
-                        onClick={() => {
-                          setSelectedQuery(query);
-                          setIsViewDialogOpen(true);
-                        }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    rowSpan={9}
-                    className="h-[55vh] text-center"
-                  >
-                    No Queries Found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          )}
-        </Table>
-
-        {/* Pagination */}
-        {data?.queries.length > 0 && (
-          <TablePagination
-            currentPage={filters.page!}
-            totalPages={filters.total_pages!}
-            itemsPerPage={filters.limit!}
-            totalItems={filters.total_items || 0}
-            onPageChange={(page: number) => {
+        <DataTable
+          columns={columns}
+          data={data?.queries}
+          isLoading={isLoading}
+          colSpan={8}
+          onSort={handleSort}
+          pagination={{
+            currentPage: filters.page!,
+            totalPages: filters.total_pages!,
+            itemsPerPage: filters.limit!,
+            totalItems: filters.total_items || 0,
+            onPageChange: (page) =>
               setFilters((prev) => ({
                 ...prev,
-                page: page,
-              }));
-            }}
-          />
-        )}
+                page,
+              })),
+          }}
+          renderRow={(query: any) => (
+            <TableRow key={query?.id}>
+              {/* Full Name */}
+              <TableCell>{query?.full_name}</TableCell>
+
+              {/* Email */}
+              <TableCell>{query?.email}</TableCell>
+
+              {/* Phone */}
+              <TableCell>{query?.phone_no}</TableCell>
+
+              {/* Query */}
+              <TableCell className="max-w-xs">
+                {truncateText(query?.query)}
+              </TableCell>
+
+              {/* Status Badge */}
+              <TableCell className="cursor-pointer">
+                {getQueryStatusBadge(query?.status)}
+              </TableCell>
+
+              {/* Status Switch */}
+              <TableCell className="text-center">
+                <Switch
+                  checked={query?.status === "pending"}
+                  onCheckedChange={() => {
+                    setSelectedQuery(query);
+                    setStatusModalOpen(true);
+                  }}
+                  className="data-[state=checked]:bg-primary"
+                />
+              </TableCell>
+
+              {/* Created At */}
+              <TableCell className="whitespace-nowrap">
+                {formatDate(query?.created_at)}
+              </TableCell>
+
+              {/* Actions */}
+              <TableCell>
+                <TableActionButton
+                  Icon={Eye}
+                  color="text-indigo-600"
+                  label="View Query"
+                  onClick={() => {
+                    setSelectedQuery(query);
+                    setIsViewDialogOpen(true);
+                  }}
+                />
+              </TableCell>
+            </TableRow>
+          )}
+        />
       </div>
 
       {/* View Query Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent
           // className="max-w-2xl overflow-y-auto border-none sm:max-w-lg"
-        className="max-h-[85vh] overflow-y-auto border-none  sm:max-w-lg"
-
+          className="max-h-[85vh] overflow-y-auto border-none sm:max-w-lg"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <DialogHeader>
