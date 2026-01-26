@@ -185,7 +185,7 @@ export default function ProductList() {
               }));
               setSearchTerm("");
             }}
-            className="pt-2"
+            // className="pt-2"
           />
 
           <div className="flex items-center gap-2">

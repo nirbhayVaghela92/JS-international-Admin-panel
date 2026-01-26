@@ -25,9 +25,8 @@ export const useChangePassword = () => {
   const response = useMutation({
     mutationKey: ["useChangePassword"],
     mutationFn: async (body: {
-      current_password: string;
-      new_password: string;
-      confirm_new_password: string;
+      currentPassword: string;
+      newPassword: string;
     }) => {
       const res = await changePassword(body);
       return res;
@@ -79,11 +78,11 @@ export const useEditProfile = () => {
       const res = await editProfile(body);
       return res;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["useGetAdminDetails"],
-      });
-    },
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries({
+    //     queryKey: ["useGetAdminDetails"],
+    //   });
+    // },
   });
   return response;
 };

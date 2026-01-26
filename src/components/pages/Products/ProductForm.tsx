@@ -187,11 +187,11 @@ export function ProductForm({ mode }: ProductFormProps) {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label htmlFor="product_id" className="mb-2 block">
-                    Product ID
+                    Product Code
                   </Label>
                   <Input
                     id="product_id"
-                    placeholder="e.g., PRD-001"
+                    placeholder="Enter product code"
                     {...register("product_id")}
                     className={errors.product_id ? "border-destructive" : ""}
                   />

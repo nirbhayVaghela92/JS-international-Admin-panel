@@ -1,14 +1,12 @@
-import { changeProductStatus, deleteProduct } from "@/services/products.service";
-import { de } from "date-fns/locale";
 
 export const API = {
   signin: "/admin/login",
   sendForgotPasswordOtp: "/admin/forgot-password/send-otp",
   verifyForgotPasswordOtp: "/admin/forgot-password/verify-otp",
   resetPassword: "/admin/forgot-password/update-password",
-  changePassword: "/admin/account-settings/change-password",
+  changePassword: "/admin/account/change-password",
   getDashbaoardData: "/admin/dashboard",
-  editAdminProfile: "/admin/update",
+  editAdminProfile: "/admin/account/profile",
   getCountryList: "/common/country-list",
   getStateList: "/common/state-list",
   getCityList: "/common/city-list",

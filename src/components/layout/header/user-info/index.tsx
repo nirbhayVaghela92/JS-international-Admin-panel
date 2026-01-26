@@ -28,14 +28,14 @@ export function UserInfo() {
 
         <figure className="flex items-center gap-3">
           <FallbackImage
-            src={AdminDetails?.profile_image}
-            alt={`Avatar of ${AdminDetails?.username}`}
+            src={AdminDetails?.profileImage}
+            alt={AdminDetails?.name}
             role="presentation"
             width={200}
             height={200}
           />
           <figcaption className="flex items-center gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only">
-            <span>{AdminDetails?.username}</span>
+            <span>{AdminDetails?.name}</span>
             <ChevronUpIcon
               aria-hidden
               className={cn(
@@ -55,8 +55,8 @@ export function UserInfo() {
         <h2 className="sr-only">User information</h2>
         <figure className="flex items-center gap-2.5 px-5 py-3.5">
           <FallbackImage
-            src={AdminDetails?.profile_image}
-            alt={`Avatar of ${AdminDetails?.username}`}
+            src={AdminDetails?.profileImage}
+            alt={AdminDetails?.name}
             role="presentation"
             width={200}
             height={200}
@@ -64,7 +64,7 @@ export function UserInfo() {
 
           <figcaption className="space-y-1 text-base font-medium">
             <div className="mb-2 leading-none text-dark dark:text-white">
-              {AdminDetails?.username}
+              {AdminDetails?.name}
             </div>
 
             <div className="leading-none text-gray-6">{AdminDetails?.email}</div>

@@ -81,13 +81,12 @@ export const resetPassword = async (body: {
 };
 
 export const changePassword = async (body: {
-  current_password: string;
-  new_password: string;
-  confirm_new_password: string;
+  currentPassword: string;
+  newPassword: string;
 }) => {
   let response;
   try {
-    response = await apiClient.post(API.changePassword, body);
+    response = await apiClient.put(API.changePassword, body);
     toast.success(response.data.message || "Password changed successfully.");
   } catch (error: any) {
     response = error.response;

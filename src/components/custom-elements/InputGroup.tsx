@@ -106,7 +106,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
       </label>
       <div
         className={cn(
-          "relative [&_svg]:absolute [&_svg]:top-1/2 [&_svg]:-translate-y-1/2",
+          "mt-1 relative [&_svg]:absolute [&_svg]:top-1/2 [&_svg]:-translate-y-1/2",
           props.iconPosition === "left"
             ? "[&_svg]:left-4.5"
             : "[&_svg]:right-4.5",

@@ -35,14 +35,14 @@ export function AccountSettings() {
 
   const onSubmit = async (values: EditAdminDetailsSchemaType) => {
     const formData = new FormData();
-    formData.append("id", String(adminDetails?.id));
-    formData.append("username", values.full_name);
+    // formData.append("id", String(adminDetails?.id));
+    formData.append("name", values.full_name);
     if (values.profile_image instanceof File) {
       formData.append("profile_image", values.profile_image);
     }
 
     const { data } = await editProfile(formData);
-
+    console.log(data, "data");
     if (!data?.status || data?.status === "false") {
       return;
     }
@@ -101,7 +101,6 @@ export function AccountSettings() {
             className="mb-5.5"
             type="email"
             name="email"
-
             label="Email Address"
             defaultValue={adminDetails?.email}
             icon={<EmailIcon />}
