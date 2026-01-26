@@ -1,6 +1,5 @@
 "use client";
 import {
-  CircleX,
   X,
   FileAudio,
   Image as ImageIcon,
@@ -96,6 +95,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
 
   useEffect(() => {
     const currentFiles = getValues(name);
+    console.log(currentFiles, "currentFiles");
     const getData = async () => {
       if (Array.isArray(currentFiles)) {
         const newPreviews = currentFiles.map((file) =>
@@ -146,10 +146,10 @@ const UploadZone: React.FC<UploadZoneProps> = ({
         });
         const newPreviews = fileArray.map((file) => URL.createObjectURL(file));
         setPreviews((prev: any) => [...prev, ...newPreviews]);
-        if (previews.length + newPreviews.length >= maxFiles) {
+        if (previews.length + newPreviews.length > maxFiles) {
           setIsError(true);
         }
-        if (previews.length + newPreviews.length >= maxFiles) 
+        if (previews.length + newPreviews.length > maxFiles) 
           setShowUploadBox(false);
       }
     }

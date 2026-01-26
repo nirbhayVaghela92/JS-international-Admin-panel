@@ -45,7 +45,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
 
   // Check if this is a phone number field
   const isPhoneField =
-    name === "phone_number" || name === "phone" || name === "phoneNumber";
+    name === "phone_number" || name === "phone" || name === "phoneNumber" || name === "number";
 
   // Handle key press for phone number fields
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -83,12 +83,13 @@ const InputGroup: React.FC<InputGroupProps> = ({
 
   // Handle paste events for phone number fields
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    if (isPhoneField && type === "text") {
-      const pastedText = e.clipboardData.getData("text");
+    if (type === "phoneNumber") {
+      const pastedText = e.clipboardData.getData("text").trim();
 
-      // Allow only numeric characters
-      const numericPattern = /^[0-9]*$/;
-      if (!numericPattern.test(pastedText)) {
+      // Allow: +, digits, space, -, (, )
+      const phonePastePattern = /^[+\d\s()-]+$/;
+
+      if (!phonePastePattern.test(pastedText)) {
         e.preventDefault();
       }
     }
@@ -105,7 +106,7 @@ const InputGroup: React.FC<InputGroupProps> = ({
       </label>
       <div
         className={cn(
-          "relative mt-1 [&_svg]:absolute [&_svg]:top-1/2 [&_svg]:-translate-y-1/2",
+          "relative [&_svg]:absolute [&_svg]:top-1/2 [&_svg]:-translate-y-1/2",
           props.iconPosition === "left"
             ? "[&_svg]:left-4.5"
             : "[&_svg]:right-4.5",
@@ -134,29 +135,22 @@ const InputGroup: React.FC<InputGroupProps> = ({
           value={value}
           defaultValue={defaultValue}
           className={cn(
-            "w-[300px] rounded-lg border bg-white text-sm outline-none transition ",
+            // "w-full rounded-lg border-[1.5px] border-stroke bg-transparent text-sm outline-none transition focus:border-primary focus:ring-1 disabled:cursor-default disabled:bg-gray-2 data-[active=true]:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary dark:disabled:bg-dark dark:data-[active=true]:border-primary",
+            "w-full rounded-lg border bg-white text-sm shadow-sm outline-none focus:outline-none focus:ring-1",
             type === "file"
               ? getFileStyles(props.fileStyleVariant!)
               : "px-3 py-2 text-sm text-dark placeholder:text-dark-6 dark:text-white",
-
-            // spacing for icon
             props.iconPosition === "left" && "pl-12.5",
             props.height === "sm" && "py-2.5",
-
-            // error vs normal
             error
               ? "border-red-500 focus:ring-red-500"
               : "border-gray-300 focus:border-primary focus:ring-primary",
-
-            // IMPORTANT: disable ring completely
-            "focus:ring-0 focus:ring-offset-0",
           )}
           required={required}
           disabled={disabled}
           data-active={active}
           {...props}
         />
-
         {name === "search" && value ? icon : name !== "search" && icon}
       </div>
 

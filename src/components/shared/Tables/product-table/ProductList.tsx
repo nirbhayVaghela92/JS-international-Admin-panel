@@ -170,11 +170,11 @@ export default function ProductList() {
               placeholder="Search products..."
               value={searchTerm}
               onChange={handleSearch}
-              className="py-2 pl-4"
+              className="w-[300px]"
             />
             <CustomDropdown
               placeholder="Filter by Status"
-              width="w-70"
+              width="w-40"
               options={statusDropdown!}
               value={filters.status}
               onChange={(option) => {
@@ -186,7 +186,7 @@ export default function ProductList() {
             />
             <CustomDropdown
               placeholder="Filter by Category"
-              width="w-70"
+              width="w-50"
               options={categoryDropdown!}
               value={filters.category}
               onChange={(option) => {

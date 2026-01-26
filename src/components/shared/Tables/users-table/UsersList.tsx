@@ -48,165 +48,6 @@ interface UserType {
   gender: string;
 }
 
-const dummyUsers = [
-  {
-    id: 1,
-    first_name: "John",
-    last_name: "Doe",
-    email: "john.doe@example.com",
-    phoneNo: "+1 (555) 123-4567",
-    status: "Active",
-    createdAt: "2024-01-15T10:30:00Z",
-    age: "32",
-    gender: "Male",
-    region: "NA",
-    profile: { avatar: null },
-  },
-  {
-    id: 2,
-    first_name: "Sarah",
-    last_name: "Johnson",
-    email: "sarah.johnson@example.com",
-    phoneNo: "+1 (555) 234-5678",
-    status: "Active",
-    createdAt: "2024-02-20T14:45:00Z",
-    age: "28",
-    gender: "Female",
-    region: "NA",
-    profile: { avatar: null },
-  },
-  {
-    id: 3,
-    first_name: "Michael",
-    last_name: "Chen",
-    email: "michael.chen@example.com",
-    phoneNo: "+1 (555) 345-6789",
-    status: "Inactive",
-    createdAt: "2024-03-10T09:15:00Z",
-    age: "35",
-    gender: "Male",
-    region: "SA",
-    profile: { avatar: null },
-  },
-  {
-    id: 4,
-    first_name: "Emily",
-    last_name: "Rodriguez",
-    email: "emily.rodriguez@example.com",
-    phoneNo: "+1 (555) 456-7890",
-    status: "Active",
-    createdAt: "2024-04-05T16:20:00Z",
-    age: "29",
-    gender: "Female",
-    region: "SA",
-    profile: { avatar: null },
-  },
-  {
-    id: 5,
-    first_name: "David",
-    last_name: "Kim",
-    email: "david.kim@example.com",
-    phoneNo: "+1 (555) 567-8901",
-    status: "Active",
-    createdAt: "2024-05-12T11:30:00Z",
-    age: "41",
-    gender: "Male",
-    region: "NA",
-    profile: { avatar: null },
-  },
-  {
-    id: 6,
-    first_name: "Jessica",
-    last_name: "Brown",
-    email: "jessica.brown@example.com",
-    phoneNo: "+1 (555) 678-9012",
-    status: "Inactive",
-    createdAt: "2024-06-18T13:45:00Z",
-    age: "26",
-    gender: "Female",
-    region: "Sd",
-    profile: { avatar: null },
-  },
-  {
-    id: 7,
-    first_name: "Robert",
-    last_name: "Martinez",
-    email: "robert.martinez@example.com",
-    phoneNo: "+1 (555) 789-0123",
-    status: "Active",
-    createdAt: "2024-07-22T08:00:00Z",
-    age: "38",
-    gender: "Male",
-    region: "SA",
-    profile: { avatar: null },
-  },
-  {
-    id: 8,
-    first_name: "Amanda",
-    last_name: "Taylor",
-    email: "amanda.taylor@example.com",
-    phoneNo: "+1 (555) 890-1234",
-    status: "Active",
-    createdAt: "2024-08-30T15:10:00Z",
-    age: "33",
-    gender: "Female",
-    region: "NA",
-    profile: { avatar: null },
-  },
-  {
-    id: 9,
-    first_name: "James",
-    last_name: "Anderson",
-    email: "james.anderson@example.com",
-    phoneNo: "+1 (555) 901-2345",
-    status: "Pending",
-    createdAt: "2024-09-14T10:25:00Z",
-    age: "45",
-    gender: "Male",
-    region: "Ss",
-    profile: { avatar: null },
-  },
-  {
-    id: 10,
-    first_name: "Lisa",
-    last_name: "Wilson",
-    email: "lisa.wilson@example.com",
-    phoneNo: "+1 (555) 012-3456",
-    status: "Active",
-    createdAt: "2024-10-08T12:40:00Z",
-    age: "31",
-    gender: "Female",
-    region: "NA",
-    profile: { avatar: null },
-  },
-  {
-    id: 11,
-    first_name: "Christopher",
-    last_name: "Lee",
-    email: "chris.lee@example.com",
-    phoneNo: "+1 (555) 123-7890",
-    status: "Inactive",
-    createdAt: "2024-11-02T09:30:00Z",
-    age: "27",
-    gender: "Male",
-    region: "Sd",
-    profile: { avatar: null },
-  },
-  {
-    id: 12,
-    first_name: "Michelle",
-    last_name: "Garcia",
-    email: "michelle.garcia@example.com",
-    phoneNo: "+1 (555) 234-8901",
-    status: "Active",
-    createdAt: "2024-12-15T14:15:00Z",
-    age: "36",
-    gender: "Female",
-    region: "SA",
-    profile: { avatar: null },
-  },
-];
-
 const columns = [
   { label: "Name", key: "name" },
   { label: "Email", key: "email" },
@@ -311,7 +152,7 @@ export default function UsersList() {
     <>
       <div className="overflow-x-auto rounded-lg bg-white p-8 pt-0 shadow-lg">
         {/* Filters */}
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
           <div className="relative flex items-center gap-2 pt-2">
             <InputGroup
               name="search"
@@ -329,7 +170,7 @@ export default function UsersList() {
               placeholder="Search here..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full py-2 pl-4"
+              className="w-full"
             />
             <CustomDropdown
               placeholder="Filter by Status"
@@ -407,7 +248,7 @@ export default function UsersList() {
           {isLoading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={9} className="text-center">
+                <TableCell colSpan={9} rowSpan={9} className="text-center">
                   <Loader />
                 </TableCell>
               </TableRow>

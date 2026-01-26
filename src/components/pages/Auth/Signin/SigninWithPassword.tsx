@@ -1,7 +1,6 @@
 "use client";
 import { EmailIcon, PasswordIcon } from "@/assets/icon";
 import Link from "next/link";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signInSchema, SignInSchemaType } from "@/utils/schemas";

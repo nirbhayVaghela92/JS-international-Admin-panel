@@ -17,6 +17,7 @@ export const getProductsList = async (body: FiltersTypes) => {
       error?.response?.data?.message ??
         "Something went wrong. Please try again.",
     );
+    console.log(response, "reponse")
     errorHandler(response.status);
   }
   return response;

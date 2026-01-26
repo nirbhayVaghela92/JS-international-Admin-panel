@@ -74,21 +74,21 @@ export function Sidebar() {
         aria-hidden={isBelowLg && !isOpen}
         inert={isBelowLg && !isOpen}
       >
-        <div className="flex h-full flex-col pt-2">
+        <div className="flex h-full flex-col pt-5">
           <div className="relative pr-4.5">
             <Link
               href={"/"}
               onClick={() => isBelowLg && toggleSidebar()}
               className="px-0 py-2.5 min-[850px]:py-0"
             >
-              <Logo className="!h-10" />
+              <Logo className="!h-8" />
             </Link>
 
             {/* Toggle only visible <1024px */}
             {isBelowLg && (
               <button
                 onClick={toggleSidebar}
-                className="absolute right-4.5 top-1/2 -translate-y-1/2"
+                className="absolute right-2 top-1/2 -translate-y-1/2"
               >
                 <span className="sr-only">Close Menu</span>
                 <ArrowLeftIcon className="ml-auto size-7" />

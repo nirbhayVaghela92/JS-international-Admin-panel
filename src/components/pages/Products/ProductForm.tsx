@@ -23,6 +23,7 @@ import {
 } from "@/hooks/queries";
 import { getkeyByLabel } from "@/utils/helpers/commonHelpers";
 import { Loader } from "@/components/custom-elements/Loader";
+import InputGroup from "@/components/custom-elements/InputGroup";
 
 // const CATEGORIES = ["Men's Watch", "Women's Watch", "Purses", "Jewellery"];
 
@@ -88,7 +89,7 @@ export function ProductForm({ mode }: ProductFormProps) {
   const colorVariants = watch("color_variants");
 
   const handleColorChange = (index: number, color: string) => {
-    setValue(`color_variants.${index}.color`, color);
+    setValue(`color_variants.${index}.color`, color, { shouldValidate: true });
   };
 
   const handleFormSubmit = async (data: ProductSchemaType) => {
@@ -170,7 +171,7 @@ export function ProductForm({ mode }: ProductFormProps) {
       );
     }
   }, [data]);
-  console.log(getValues(), "getValues");
+  console.log(getValues("images"), "images");
   return (
     <>
       {isFeatchingProductDetails ? (
@@ -225,7 +226,11 @@ export function ProductForm({ mode }: ProductFormProps) {
                   label="Category"
                   options={categoryDropdown!}
                   value={watch("category") ?? ""}
-                  onChange={(val) => setValue("category", val as string)}
+                  onChange={(val) =>
+                    setValue("category", val as string, {
+                      shouldValidate: true,
+                    })
+                  }
                   error={!!errors.category}
                   errorMessage={errors.category?.message}
                 />
@@ -237,11 +242,12 @@ export function ProductForm({ mode }: ProductFormProps) {
                   <Input
                     id="price"
                     type="number"
-                    step="0.01"
+                    // step="0.01"
                     placeholder="0.00"
-                    {...register("price", { valueAsNumber: true })}
+                    {...register("price")}
                     className={errors.price ? "border-destructive" : ""}
                   />
+
                   {errors.price && (
                     <p className="mt-1 text-sm text-destructive">
                       {errors.price.message}
@@ -322,64 +328,79 @@ export function ProductForm({ mode }: ProductFormProps) {
 
             <div className="space-y-4">
               {colorFields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="flex items-end gap-4 rounded-lg border border-border bg-card p-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <Label className="text-sm font-medium">Color</Label>
-                    <input
-                      type="color"
-                      value={colorVariants?.[index]?.color || "#000000"}
-                      onChange={(e) => handleColorChange(index, e.target.value)}
-                      className="h-10 w-14 cursor-pointer rounded border border-border"
-                    />
-                  </div>
+                <div key={field.id}>
+                  <div className="flex items-end gap-4 rounded-lg border border-border bg-card p-4">
+                    <div className="flex items-center gap-3">
+                      <Label className="text-sm font-medium">Color</Label>
+                      <input
+                        type="color"
+                        value={colorVariants?.[index]?.color || "#000000"}
+                        onChange={(e) =>
+                          handleColorChange(index, e.target.value)
+                        }
+                        className="h-10 w-14 cursor-pointer rounded border border-border"
+                      />
+                    </div>
 
-                  <div className="flex-1">
-                    <Label
-                      htmlFor={`color-hex-${index}`}
-                      className="text-sm font-medium"
-                    >
-                      Hex Code
-                    </Label>
-                    <Input
-                      id={`color-hex-${index}`}
-                      placeholder="#000000"
-                      {...register(`color_variants.${index}.color`)}
-                      className="mt-1"
-                    />
-                  </div>
+                    <div className="flex-1">
+                      <Label
+                        htmlFor={`color-hex-${index}`}
+                        className="text-sm font-medium"
+                      >
+                        Hex Code
+                      </Label>
+                      <Input
+                        id={`color-hex-${index}`}
+                        placeholder="#000000"
+                        {...register(`color_variants.${index}.color`)}
+                        className="mt-1"
+                      />
+                    </div>
 
-                  <div className="w-24">
-                    <Label
-                      htmlFor={`quantity-${index}`}
-                      className="text-sm font-medium"
-                    >
-                      Quantity
-                    </Label>
-                    <Input
-                      id={`quantity-${index}`}
-                      type="number"
-                      min="0"
-                      placeholder="0"
-                      {...register(`color_variants.${index}.quantity`, {
-                        valueAsNumber: true,
-                      })}
-                      className="mt-1"
-                    />
-                  </div>
+                    <div className="w-24">
+                      <Label
+                        htmlFor={`quantity-${index}`}
+                        className="text-sm font-medium"
+                      >
+                        Quantity
+                      </Label>
+                      <Input
+                        id={`quantity-${index}`}
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        {...register(`color_variants.${index}.quantity`, {
+                          valueAsNumber: true,
+                        })}
+                        className="mt-1"
+                      />
+                    </div>
 
-                  {colorFields.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => remove(index)}
-                      className="text-destructive hover:bg-destructive/10"
-                    >
-                      <FiTrash2 className="h-4 w-4" />
-                    </Button>
+                    {colorFields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => remove(index)}
+                        className="text-destructive hover:bg-destructive/10"
+                      >
+                        <FiTrash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  {errors.color_variants && errors.color_variants[index] && (
+                    <div className="mt-1 space-y-1 pl-2">
+                      {errors.color_variants[index]?.color && (
+                        <p className="text-sm text-destructive">
+                          {errors.color_variants[index]?.color?.message}
+                        </p>
+                      )}
+                      {errors.color_variants[index]?.quantity && (
+                        <p className="text-sm text-destructive">
+                          {errors.color_variants[index]?.quantity?.message}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               ))}
@@ -404,7 +425,7 @@ export function ProductForm({ mode }: ProductFormProps) {
                 ? "Creating Product..."
                 : isUpdating
                   ? "Updating Product..."
-                  : "Create Product"}
+                  :  mode === "create" ? "Create Product" : "Update Product"}
             </CustomButton>
           </div>
         </form>

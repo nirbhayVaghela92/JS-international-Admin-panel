@@ -138,12 +138,12 @@ export const ProductSchema = Yup.object().shape({
     ),
 
   price: Yup.number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value,
+    )
+    .typeError("Price is required")
     .required("Price is required")
-    .min(0, "Price must be greater than or equal to 0")
-    .test("is-decimal", "Price must have at most 2 decimal places", (value) => {
-      if (value === undefined) return true;
-      return /^\d+(\.\d{1,2})?$/.test(value.toString());
-    }),
+    .min(0.01, "Price must be greater than 0"),
 
   // quantity: Yup
   //   .number()
@@ -151,27 +151,37 @@ export const ProductSchema = Yup.object().shape({
   //   .min(0, "Quantity must be greater than or equal to 0")
   //   .integer("Quantity must be a whole number"),
 
-  cover_image: Yup.mixed()
+  cover_image: Yup.mixed<File | string>()
     .test("fileRequired", "Cover image is required", function (value) {
       const { parent } = this;
-      // Skip validation in edit mode if image already exists
-      if (parent.id && value === undefined) return true;
-      return value !== undefined;
+
+      // Edit mode → already has image, allow empty
+      if (parent.id && (value === undefined || value === null)) {
+        return true;
+      }
+
+      // Create mode → must have file
+      if (value === undefined || value === null) {
+        return this.createError({
+          message: "Cover image is required",
+        });
+      }
+
+      return true;
     })
     .test("fileType", "Only image files are allowed", function (value) {
       if (!value || typeof value === "string") return true;
+
       const file = value as File;
-      return (
-        file &&
-        ["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
-          file.type,
-        )
+      return ["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+        file.type,
       );
     })
     .test("fileSize", "File size must be less than 5MB", function (value) {
       if (!value || typeof value === "string") return true;
+
       const file = value as File;
-      return file && file.size <= 5 * 1024 * 1024;
+      return file.size <= 5 * 1024 * 1024;
     }),
 
   images: Yup.array()
@@ -210,7 +220,10 @@ export const ProductSchema = Yup.object().shape({
           .required("Quantity is required"),
       }),
     )
-    .min(1, "At least one color variant is required, and each variant must have a quantity.")
+    .min(
+      1,
+      "At least one color variant is required, and each variant must have a quantity.",
+    )
     .required(),
 
   description: Yup.string()

@@ -19,12 +19,10 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   useChangeQueryStatus,
-  useChangeUserStatus,
   useDeleteUser,
   useGetSupportQueryList,
 } from "@/hooks/queries";
 import { FiltersTypes } from "@/utils/types";
-import dayjs from "dayjs";
 import CustomDropdown from "@/components/custom-elements/CustomDropdown";
 import { paginationDropdownOptions } from "@/utils/data/dropdowns";
 import TablePagination from "@/components/shared/CustomPagination/TablePagination";
@@ -41,6 +39,7 @@ import { TableActionButton } from "@/components/custom-elements/TableActionButto
 import getQueryStatusBadge from "./QueryStatusBadge";
 import { formatDate } from "@/utils/helpers/commonHelpers";
 import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 
 const columns = [
   { label: "Name", key: "full_name" },
@@ -321,13 +320,19 @@ export default function SupportQueriesList() {
 
       {/* View Query Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent
+          // className="max-w-2xl overflow-y-auto border-none sm:max-w-lg"
+        className="max-h-[85vh] overflow-y-auto border-none  sm:max-w-lg"
+
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>Query Details</DialogTitle>
             <DialogDescription>
               Full details of the support query
             </DialogDescription>
           </DialogHeader>
+          <Separator className="my-2" />
           {selectedQuery && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -411,7 +416,7 @@ export default function SupportQueriesList() {
             }
           }}
           currentStatus={selectedQuery?.status === "pending" ? "A" : "I"}
-          itemTitle={`query from ${selectedQuery?.name}`}
+          itemTitle={`query from ${selectedQuery?.full_name}`}
           isLoading={isChangingQueryStatus}
         />
       )}

@@ -12,7 +12,7 @@ export function AddEditProductClient({
   mode,
 }: AddEditProductClientProps) {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background p-5">
       <div className="mx-auto max-w-4xl py-8">
         <Breadcrumb
           pageName={mode === "edit" ? "Edit Product" : "Add Product"}
