@@ -280,7 +280,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
       if (fileType === "image") {
         return (
           <div key={index} className="relative mr-2 inline-block h-20 w-20">
-            <img
+            <Image
               src={previewUrl}
               width={100}
               height={100}

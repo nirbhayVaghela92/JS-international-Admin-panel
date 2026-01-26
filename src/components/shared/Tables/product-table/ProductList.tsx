@@ -24,6 +24,7 @@ import UserActionDropdown from "../../User/UserActionDropdown";
 import { formatDate, formatPrice } from "@/utils/helpers/commonHelpers";
 import { FilterBar } from "@/components/custom-elements/FilterBar";
 import { DataTable } from "@/components/table-components/DataTable";
+import Image from "next/image";
 
 interface ProductType {
   name: string;
@@ -235,7 +236,9 @@ export default function ProductList() {
               <TableCell className="w-[350px] max-w-[350px]">
                 <div className="flex items-center gap-3">
                   {product?.main_image && (
-                    <img
+                    <Image
+                      width={40}
+                      height={40}
                       src={product?.main_image}
                       alt={product?.name}
                       className="h-10 w-10 rounded object-cover"
