@@ -152,16 +152,17 @@ export const ProductSchema = Yup.object().shape({
   //   .integer("Quantity must be a whole number"),
 
   cover_image: Yup.mixed<File | string>()
+    .nullable()
     .test("fileRequired", "Cover image is required", function (value) {
       const { parent } = this;
 
-      // Edit mode → already has image, allow empty
-      if (parent.id && (value === undefined || value === null)) {
+      // Edit mode → already has image
+      if (parent.id && (value === null || value === undefined)) {
         return true;
       }
 
-      // Create mode → must have file
-      if (value === undefined || value === null) {
+      // Create mode → must have image
+      if (value === null || value === undefined) {
         return this.createError({
           message: "Cover image is required",
         });
@@ -172,16 +173,14 @@ export const ProductSchema = Yup.object().shape({
     .test("fileType", "Only image files are allowed", function (value) {
       if (!value || typeof value === "string") return true;
 
-      const file = value as File;
       return ["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
-        file.type,
+        value.type,
       );
     })
     .test("fileSize", "File size must be less than 5MB", function (value) {
       if (!value || typeof value === "string") return true;
 
-      const file = value as File;
-      return file.size <= 5 * 1024 * 1024;
+      return value.size <= 5 * 1024 * 1024;
     }),
 
   images: Yup.array()

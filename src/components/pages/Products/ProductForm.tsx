@@ -171,7 +171,7 @@ export function ProductForm({ mode }: ProductFormProps) {
       );
     }
   }, [data]);
-
+console.log(getValues("cover_image"), "getValues")
   return (
     <>
       {isFeatchingProductDetails ? (
@@ -281,7 +281,7 @@ export function ProductForm({ mode }: ProductFormProps) {
             name="cover_image"
             label="Cover Image"
             multiple={false}
-            getValues={getValues}
+            // getValues={getValues}
             setValue={setValue}
             title="Upload Product Cover Image"
             // setPreview={setCoverPreview}
@@ -289,6 +289,7 @@ export function ProductForm({ mode }: ProductFormProps) {
             error={errors.cover_image?.message}
             show
             fileType="image"
+            control={control}
           />
 
           {/* Product Image */}
@@ -296,7 +297,7 @@ export function ProductForm({ mode }: ProductFormProps) {
             name="images"
             label="Product Images"
             multiple={true}
-            getValues={getValues}
+            // getValues={getValues}
             setValue={setValue}
             title="Upload product images"
             description="(Maximum 5 images, PNG, JPG, WEBP)"
@@ -306,6 +307,7 @@ export function ProductForm({ mode }: ProductFormProps) {
             fileType="image"
             removedImages={removedImages}
             setRemovedImages={setRemovedImages}
+            control={control}
             show
           />
           {/* Color Variants */}

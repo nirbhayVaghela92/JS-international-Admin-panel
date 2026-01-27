@@ -1,19 +1,15 @@
 "use client";
-import {
-  X,
-  FileAudio,
-  Image as ImageIcon,
-  FileText,
-} from "lucide-react";
+import { X, FileAudio, Image as ImageIcon, FileText } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useWatch } from "react-hook-form";
 
 type FileType = "image" | "audio" | "pdf";
 
 interface UploadZoneProps {
   label?: string;
   name: string;
-  getValues: any;
+  getValues?: any;
   setValue: any;
   className?: string;
   error?: string | any;
@@ -31,12 +27,13 @@ interface UploadZoneProps {
   fileType?: FileType;
   maxFiles?: number;
   isStaticPreview?: boolean;
+  control?: any;
 }
 
 const UploadZone: React.FC<UploadZoneProps> = ({
   name,
   label,
-  getValues,
+  // getValues,
   setValue,
   error,
   disabled,
@@ -49,13 +46,18 @@ const UploadZone: React.FC<UploadZoneProps> = ({
   description,
   fileType = "image",
   maxFiles = 6,
-  isStaticPreview = false,
+  control,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string>();
   const [previews, setPreviews] = useState<any[]>([]);
   const [isError, setIsError] = useState(false);
   const [showUploadBox, setShowUploadBox] = useState(true);
+
+  const currentFiles = useWatch({
+    name,
+    control,
+  });
 
   // File type configurations
   const fileTypeConfig = {
@@ -92,10 +94,9 @@ const UploadZone: React.FC<UploadZoneProps> = ({
   const config = fileTypeConfig[fileType];
   const displayTitle = title || config.defaultTitle;
   const displayDescription = description || config.defaultDescription;
-  console.log(getValues(name), "currentFiles OOutside");
+  console.log(currentFiles, "currentFiles OOutside");
 
   useEffect(() => {
-    const currentFiles = getValues(name);
     console.log(currentFiles, "currentFiles");
     const getData = async () => {
       if (Array.isArray(currentFiles)) {
@@ -112,7 +113,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
       }
     };
     getData();
-  }, [getValues, name]);
+  }, [currentFiles, name]);
 
   useEffect(() => {
     if (!preview && inputRef.current) {
@@ -124,7 +125,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
     const files = event.target.files;
     if (files && files.length > 0) {
       const fileArray = Array.from(files).filter(config.mimeCheck);
-      const existingFiles = getValues(name) || [];
+      const existingFiles = currentFiles || [];
 
       if (
         multiple === false ||
@@ -150,7 +151,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
         if (previews.length + newPreviews.length > maxFiles) {
           setIsError(true);
         }
-        if (previews.length + newPreviews.length > maxFiles) 
+        if (previews.length + newPreviews.length > maxFiles)
           setShowUploadBox(false);
       }
     }
@@ -162,12 +163,8 @@ const UploadZone: React.FC<UploadZoneProps> = ({
 
   const removeFile = (index: number) => {
     const updatedPreviews = [...previews];
-    const currentFiles = getValues(name);
     if (typeof currentFiles[index] === "string") {
-      setRemovedImages([
-        currentFiles[index],
-        ...removedImages,
-      ]);
+      setRemovedImages([currentFiles[index], ...removedImages]);
     }
     updatedPreviews.splice(index, 1);
     currentFiles?.length > 0 && currentFiles.splice(index, 1);
@@ -374,14 +371,12 @@ const UploadZone: React.FC<UploadZoneProps> = ({
 
   return (
     <div>
-      <div className="space-y-2 flex flex-col">
+      <div className="flex flex-col space-y-2">
         {label && (
-          <label className="text-body-sm font-medium text-dark">
-            {label}
-          </label>
+          <label className="text-body-sm font-medium text-dark">{label}</label>
         )}
         {show && showUploadBox && (
-          <div className="flex flex-col w-full">
+          <div className="flex w-full flex-col">
             <div className="relative cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-4 text-center">
               <div className="flex flex-col items-center gap-2">
                 <config.icon className="h-8 w-8 text-gray-400" />
