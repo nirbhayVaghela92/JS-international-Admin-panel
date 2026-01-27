@@ -190,6 +190,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
             width={100}
             height={100}
             alt="Preview"
+            unoptimized
             className="h-full w-full rounded-md border object-cover"
           />
           <button
@@ -285,6 +286,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
               width={100}
               height={100}
               alt="Preview"
+              unoptimized
               className="h-full w-full rounded-md border object-cover"
             />
             {cancle && (

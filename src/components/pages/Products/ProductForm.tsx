@@ -171,7 +171,7 @@ export function ProductForm({ mode }: ProductFormProps) {
       );
     }
   }, [data]);
-  console.log(getValues("images"), "images");
+
   return (
     <>
       {isFeatchingProductDetails ? (
@@ -289,6 +289,7 @@ export function ProductForm({ mode }: ProductFormProps) {
             error={errors.cover_image?.message}
             show
             maxFiles={5}
+            fileType="image"
           />
 
           {/* Product Image */}
