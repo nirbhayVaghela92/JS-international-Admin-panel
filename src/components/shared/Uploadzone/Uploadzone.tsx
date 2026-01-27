@@ -92,6 +92,7 @@ const UploadZone: React.FC<UploadZoneProps> = ({
   const config = fileTypeConfig[fileType];
   const displayTitle = title || config.defaultTitle;
   const displayDescription = description || config.defaultDescription;
+  console.log(getValues(name), "currentFiles OOutside");
 
   useEffect(() => {
     const currentFiles = getValues(name);

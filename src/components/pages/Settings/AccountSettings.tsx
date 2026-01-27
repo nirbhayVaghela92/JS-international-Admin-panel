@@ -20,8 +20,9 @@ export function AccountSettings() {
   const router = useRouter();
   const { mutateAsync: editProfile, isPending } = useEditProfile();
   const adminDetails = LocalStorageGetItem("adminDetails");
-  console.log(adminDetails, "adminDetails");
+
   const {
+    getValues,
     setValue,
     register,
     handleSubmit,
@@ -34,7 +35,7 @@ export function AccountSettings() {
     },
     resolver: yupResolver(editAdminProfileSchema),
   });
-
+  console.log(adminDetails, "adminDetails");
   const onSubmit = async (values: EditAdminDetailsSchemaType) => {
     const formData = new FormData();
     // formData.append("id", String(adminDetails?.id));
@@ -45,7 +46,7 @@ export function AccountSettings() {
       
     const { data } = await editProfile(formData);
 
-    if (!data?.status || data?.status === "false") {
+    if (!data?.success || data?.success === "false") {
       return;
     }
 
@@ -69,7 +70,7 @@ export function AccountSettings() {
   if (isPending || !adminDetails) {
     return <Loader />;
   }
-
+  console.log(getValues());
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="rounded-[10px] bg-white p-7 shadow-1 dark:bg-gray-dark dark:shadow-card">
@@ -90,7 +91,7 @@ export function AccountSettings() {
                 }
               />
             )}
-          />
+          />  
 
           <InputGroup
             {...register("full_name")}

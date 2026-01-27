@@ -288,7 +288,6 @@ export function ProductForm({ mode }: ProductFormProps) {
             // preview={coverPreview ?? ""}
             error={errors.cover_image?.message}
             show
-            maxFiles={5}
             fileType="image"
           />
 
