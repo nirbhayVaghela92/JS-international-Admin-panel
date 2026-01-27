@@ -185,12 +185,11 @@ const UploadZone: React.FC<UploadZoneProps> = ({
     if (fileType === "image" && preview) {
       return (
         <div className="relative mr-2 inline-block h-20 w-20">
-          <Image
+          <img
             src={preview}
-            width={100}
-            height={100}
+            // width={100}
+            // height={100}
             alt="Preview"
-            unoptimized
             className="h-full w-full rounded-md border object-cover"
           />
           <button
@@ -281,12 +280,12 @@ const UploadZone: React.FC<UploadZoneProps> = ({
       if (fileType === "image") {
         return (
           <div key={index} className="relative mr-2 inline-block h-20 w-20">
-            <Image
+            <img
               src={previewUrl}
-              width={100}
-              height={100}
+              // width={100}
+              // height={100}
               alt="Preview"
-              unoptimized
+              // unoptimized
               className="h-full w-full rounded-md border object-cover"
             />
             {cancle && (
