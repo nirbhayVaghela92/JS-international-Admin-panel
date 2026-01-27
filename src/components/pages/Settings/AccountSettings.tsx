@@ -20,7 +20,9 @@ export function AccountSettings() {
   const router = useRouter();
   const { mutateAsync: editProfile, isPending } = useEditProfile();
   const adminDetails = LocalStorageGetItem("adminDetails");
+  console.log(adminDetails, "adminDetails");
   const {
+    setValue,
     register,
     handleSubmit,
     control,
@@ -28,7 +30,7 @@ export function AccountSettings() {
   } = useForm<EditAdminDetailsSchemaType>({
     defaultValues: {
       profile_image: adminDetails?.profile_image,
-      full_name: adminDetails?.username || "",
+      full_name: adminDetails?.name || "",
     },
     resolver: yupResolver(editAdminProfileSchema),
   });
@@ -40,14 +42,20 @@ export function AccountSettings() {
     if (values.profile_image instanceof File) {
       formData.append("profile_image", values.profile_image);
     }
-
+      
     const { data } = await editProfile(formData);
-    console.log(data, "data");
+
     if (!data?.status || data?.status === "false") {
       return;
     }
 
-    LocalStorageSetItem("adminDetails", data?.data);
+    LocalStorageSetItem("adminDetails", {
+       name: data?.name ?? "Admin",
+      email: adminDetails?.email ?? "",
+      profileImage: data?.profileImage ?? "",
+    });
+    setValue("profile_image", data?.profileImage ?? "");
+    setValue("full_name", data?.name ?? "Admin");
     router.replace(routes.dashboard);
   };
 
