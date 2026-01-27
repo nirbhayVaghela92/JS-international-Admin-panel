@@ -30,7 +30,7 @@ export function AccountSettings() {
     formState: { errors },
   } = useForm<EditAdminDetailsSchemaType>({
     defaultValues: {
-      profile_image: adminDetails?.profile_image,
+      profile_image: adminDetails?.profileImage,
       full_name: adminDetails?.name || "",
     },
     resolver: yupResolver(editAdminProfileSchema),
