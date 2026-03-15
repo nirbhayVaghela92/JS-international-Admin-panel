@@ -20,19 +20,22 @@ export function AccountSettings() {
   const router = useRouter();
   const { mutateAsync: editProfile, isPending } = useEditProfile();
   const adminDetails = LocalStorageGetItem("adminDetails");
+
   const {
+    getValues,
+    setValue,
     register,
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<EditAdminDetailsSchemaType>({
     defaultValues: {
-      profile_image: adminDetails?.profile_image,
-      full_name: adminDetails?.username || "",
+      profile_image: adminDetails?.profileImage,
+      full_name: adminDetails?.name || "",
     },
     resolver: yupResolver(editAdminProfileSchema),
   });
-
+  console.log(adminDetails, "adminDetails");
   const onSubmit = async (values: EditAdminDetailsSchemaType) => {
     const formData = new FormData();
     // formData.append("id", String(adminDetails?.id));
@@ -40,14 +43,20 @@ export function AccountSettings() {
     if (values.profile_image instanceof File) {
       formData.append("profile_image", values.profile_image);
     }
-
+      
     const { data } = await editProfile(formData);
-    console.log(data, "data");
-    if (!data?.status || data?.status === "false") {
+
+    if (!data?.success || data?.success === "false") {
       return;
     }
 
-    LocalStorageSetItem("adminDetails", data?.data);
+    LocalStorageSetItem("adminDetails", {
+       name: data?.name ?? "Admin",
+      email: adminDetails?.email ?? "",
+      profileImage: data?.profileImage ?? "",
+    });
+    setValue("profile_image", data?.profileImage ?? "");
+    setValue("full_name", data?.name ?? "Admin");
     router.replace(routes.dashboard);
   };
 
@@ -61,7 +70,7 @@ export function AccountSettings() {
   if (isPending || !adminDetails) {
     return <Loader />;
   }
-
+  console.log(getValues());
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="rounded-[10px] bg-white p-7 shadow-1 dark:bg-gray-dark dark:shadow-card">
@@ -82,7 +91,7 @@ export function AccountSettings() {
                 }
               />
             )}
-          />
+          />  
 
           <InputGroup
             {...register("full_name")}

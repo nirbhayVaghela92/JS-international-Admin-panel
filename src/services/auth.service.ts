@@ -20,7 +20,7 @@ export const signIn = async (body: SignInSchemaType) => {
       response?.data?.message ??
         "Something went wrong. Please try again.",
     );
-    errorHandler(response.status);
+    // errorHandler(response.status);
   }
   return response;
 };
@@ -42,7 +42,7 @@ export const sendForgotPasswordOtp = async (body: { email: string }) => {
 
 export const verifyForgotPasswordOtp = async (body: {
   email: string;
-  otp: string;
+  otp: string;          
 }) => {
   let response;
   try {

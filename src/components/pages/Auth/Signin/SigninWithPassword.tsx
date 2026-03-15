@@ -42,9 +42,9 @@ export default function SigninWithPassword() {
     Cookies.set("token", data.token);
     // const res = await getAdminDetails(data.data.admin.id);
     LocalStorageSetItem("adminDetails", {
-      name: data?.data?.name ?? "Admin",
-      email: data?.data?.email ?? values.email,
-      profileImage: data?.data?.profileImage ?? "",
+      name: data?.name ?? "Admin",
+      email: data?.email ?? values.email,
+      profileImage: data?.profileImage ?? "",
     });
 
     router.replace(routes.dashboard);
