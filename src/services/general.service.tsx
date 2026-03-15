@@ -58,6 +58,7 @@ export const getDashboardData = async () => {
       error?.response?.data?.message ??
         "Something went wrong. Please try again.",
     );
+
     errorHandler(response.status);
   }
   return response;

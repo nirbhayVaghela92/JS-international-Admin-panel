@@ -16,8 +16,12 @@ export const routes = {
   products: {
     list: (page: number = 1) => `/products?page=${page}`,
     view: (slug: string) => `/products/${slug}`,
-    add: "/products/add-product", 
+    add: "/products/add-product",
     edit: (slug: string) => `/products/edit-product/${slug}`,
+  },
+  order: {
+    list: (page: number = 1) => `/orders?page=${page}`,
+    view: (id: number) => `/orders/${id}`,
   },
   dashboard: "/dashboard",
   supportQueries: {
@@ -49,6 +53,7 @@ export const protectedRoutes: string[] = [
   routes.dashboard,
   routes.settings.changePassword,
   routes.settings.editProfile,
+  "/orders",
   "/users",
   "/products",
   "/support-queries",

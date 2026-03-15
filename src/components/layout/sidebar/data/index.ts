@@ -1,5 +1,6 @@
 import { routes } from "@/constants/routes";
 import * as Icons from "@/assets/icon";
+import { ShoppingCart } from "lucide-react"
 
 export const NAV_DATA = [
   {
@@ -21,6 +22,12 @@ export const NAV_DATA = [
         title: "Products",
         url: routes.products.list(),
         icon: Icons.Products,
+        items: [],
+      },
+            {
+        title: "Orders",
+        url: routes.order.list(),
+        icon: ShoppingCart,
         items: [],
       },
       {

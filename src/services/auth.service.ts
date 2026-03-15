@@ -9,13 +9,15 @@ export const signIn = async (body: SignInSchemaType) => {
   let response;
   try {
     response = await apiClient.post(API.signin, body);
+    console.log(response, "response");
     if (response.status === 200) {
       toast.success(response?.data?.message ?? "Signed in successfully. Welcome to the admin panel.");
     }
   } catch (error: any) {
     response = error.response;
+    
     toast.error(
-      error?.response?.data?.message ??
+      response?.data?.message ??
         "Something went wrong. Please try again.",
     );
     errorHandler(response.status);
